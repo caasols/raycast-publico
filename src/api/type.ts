@@ -36,6 +36,7 @@ export interface Article {
   autores?:
     | Array<{
         nome: string;
+        name?: string;
         cargo?: string;
         email?: string;
         imagem?: {
@@ -44,6 +45,7 @@ export interface Article {
       }>
     | {
         nome: string;
+        name?: string;
         cargo?: string;
         email?: string;
         imagem?: {

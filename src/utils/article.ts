@@ -57,6 +57,26 @@ export function cleanDescription(description?: string): string {
   return cleanedDesc;
 }
 
+type AuthorLike = string | { nome?: string; name?: string } | undefined | null;
+
+function extractAuthorName(author: AuthorLike): string | null {
+  if (typeof author === "string") {
+    return author;
+  }
+
+  if (author && typeof author === "object") {
+    if (author.nome && typeof author.nome === "string") {
+      return author.nome;
+    }
+
+    if (author.name && typeof author.name === "string") {
+      return author.name;
+    }
+  }
+
+  return null;
+}
+
 export function formatAuthors(autores: Article["autores"]): string {
   if (!autores) {
     return "Not available";
@@ -64,24 +84,15 @@ export function formatAuthors(autores: Article["autores"]): string {
 
   if (Array.isArray(autores)) {
     const authorNames = autores
-      .filter((author) => author && (typeof author === "string" || author.nome))
-      .map((author) => (typeof author === "string" ? author : author.nome));
+      .map((author) => extractAuthorName(author as AuthorLike))
+      .filter((name): name is string => Boolean(name));
 
     return authorNames.length > 0 ? authorNames.join(", ") : "Not available";
   }
 
-  if (typeof autores === "object" && autores !== null) {
-    if ("nome" in autores) {
-      return autores.nome as string;
-    }
-
-    if ("name" in autores && typeof autores.name === "string") {
-      return autores.name;
-    }
-  }
-
-  if (typeof autores === "string") {
-    return autores;
+  const singleAuthor = extractAuthorName(autores as AuthorLike);
+  if (singleAuthor) {
+    return singleAuthor;
   }
 
   return "Not available";
