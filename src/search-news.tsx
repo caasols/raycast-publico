@@ -54,7 +54,7 @@ export default function Command() {
       const message = err instanceof Error ? err.message : String(err);
       setError(message);
       setArticles([]);
-      await showFailureToast("Unable to search Público", message);
+      await showFailureToast({ title: "Unable to search Público", message });
     } finally {
       setIsLoading(false);
     }
@@ -87,7 +87,10 @@ export default function Command() {
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      await showFailureToast("Unable to load article details", message);
+      await showFailureToast({
+        title: "Unable to load article details",
+        message,
+      });
     } finally {
       setIsLoadingDetails(false);
     }

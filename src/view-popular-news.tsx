@@ -24,7 +24,7 @@ export default function Command() {
       keepPreviousData: true,
       onError: (err) => {
         const message = err instanceof Error ? err.message : String(err);
-        void showFailureToast("Unable to load top news", message);
+        void showFailureToast({ title: "Unable to load top news", message });
       },
     },
   );
