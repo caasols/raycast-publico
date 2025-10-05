@@ -1,7 +1,11 @@
 import { Color, Icon, Image } from "@raycast/api";
+import { formatDate } from "./formatDate";
 import { Article, TagLike } from "../api/type";
 
-const FALLBACK_URL = "https://www.publico.pt";
+export const FALLBACK_URL = "https://www.publico.pt";
+export const DEFAULT_METADATA_PLACEHOLDER = "Not available";
+export const UNKNOWN_DATE_PLACEHOLDER = DEFAULT_METADATA_PLACEHOLDER;
+export const INVALID_DATE_PREFIX = "0001-01-01";
 const TAG_COLORS: Color.ColorLike[] = [
   "#B22222",
   "#4B0082",
@@ -33,6 +37,20 @@ export function getArticleUrl(article: Article): string {
   }
 
   return fixedUrl;
+}
+
+export function resolvePublishedDate(article: Article): string {
+  const timestamp = article.data ?? article.time ?? "";
+
+  if (!timestamp) {
+    return UNKNOWN_DATE_PLACEHOLDER;
+  }
+
+  if (timestamp.includes(INVALID_DATE_PREFIX)) {
+    return UNKNOWN_DATE_PLACEHOLDER;
+  }
+
+  return formatDate(timestamp);
 }
 
 export function cleanDescription(description?: string): string {
@@ -79,7 +97,7 @@ function extractAuthorName(author: AuthorLike): string | null {
 
 export function formatAuthors(autores: Article["autores"]): string {
   if (!autores) {
-    return "Not available";
+    return DEFAULT_METADATA_PLACEHOLDER;
   }
 
   if (Array.isArray(autores)) {
@@ -87,7 +105,9 @@ export function formatAuthors(autores: Article["autores"]): string {
       .map((author) => extractAuthorName(author as AuthorLike))
       .filter((name): name is string => Boolean(name));
 
-    return authorNames.length > 0 ? authorNames.join(", ") : "Not available";
+    return authorNames.length > 0
+      ? authorNames.join(", ")
+      : DEFAULT_METADATA_PLACEHOLDER;
   }
 
   const singleAuthor = extractAuthorName(autores as AuthorLike);
@@ -95,7 +115,7 @@ export function formatAuthors(autores: Article["autores"]): string {
     return singleAuthor;
   }
 
-  return "Not available";
+  return DEFAULT_METADATA_PLACEHOLDER;
 }
 
 type TagObject = {

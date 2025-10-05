@@ -1,15 +1,6 @@
-import {
-  ActionPanel,
-  Action,
-  List,
-  Icon,
-  showToast,
-  Toast,
-} from "@raycast/api";
-import { useCallback, useEffect, useState } from "react";
+import { ActionPanel, Action, List, Icon } from "@raycast/api";
 import { fetchTopNews } from "./api/client";
-import { Article } from "./api/type";
-import { formatDate } from "./utils/formatDate";
+import { showFailureToast, useCachedPromise } from "@raycast/utils";
 import {
   cleanDescription,
   extractTags,
@@ -17,51 +8,35 @@ import {
   getArticleIcon,
   getArticleUrl,
   getTagColor,
+  DEFAULT_METADATA_PLACEHOLDER,
+  resolvePublishedDate,
 } from "./utils/article";
 
 const MAX_TAGS = 6;
+const SUMMARY_PLACEHOLDER = "No summary available.";
+const UNTITLED_ARTICLE = "Untitled";
 
 export default function Command() {
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, error, revalidate } = useCachedPromise(
+    fetchTopNews,
+    [],
+    {
+      keepPreviousData: true,
+      onError: (err) => {
+        const message = err instanceof Error ? err.message : String(err);
+        void showFailureToast("Unable to load top news", message);
+      },
+    },
+  );
 
-  const fetchArticles = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
+  const articles = data ?? [];
+  const errorMessage = error
+    ? error instanceof Error
+      ? error.message
+      : String(error)
+    : null;
 
-      const data = await fetchTopNews();
-      setArticles(data);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      setError(message);
-      await showToast(Toast.Style.Failure, "Unable to load top news", message);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void fetchArticles();
-  }, [fetchArticles]);
-
-  function getPublishedDate(article: Article): string {
-    if (article.data) {
-      if (article.data.includes("0001-01-01")) {
-        return "Not available";
-      }
-      return formatDate(article.data);
-    }
-
-    if (article.time) {
-      return formatDate(article.time);
-    }
-
-    return "Not available";
-  }
-
-  if (error) {
+  if (errorMessage) {
     return (
       <List
         isLoading={isLoading}
@@ -71,7 +46,7 @@ export default function Command() {
         <List.EmptyView
           icon={Icon.ExclamationMark}
           title="Unable to load Público news"
-          description={error}
+          description={errorMessage}
         />
       </List>
     );
@@ -101,14 +76,14 @@ export default function Command() {
     >
       {articles.map((article, index) => {
         const cleanTitle =
-          article.titulo?.replace(/<[^>]*>/g, "") || "Untitled";
+          article.titulo?.replace(/<[^>]*>/g, "") || UNTITLED_ARTICLE;
         const authorText = formatAuthors(article.autores);
         const tags = extractTags(article.tags).slice(0, MAX_TAGS);
-        const publishedDate = getPublishedDate(article);
+        const publishedDate = resolvePublishedDate(article);
         const icon = getArticleIcon(article);
         const articleUrl = getArticleUrl(article);
         const summary = cleanDescription(article.descricao);
-        const detailMarkdown = `# ${cleanTitle}\n\n---\n\n${summary || "No summary available."}\n`;
+        const detailMarkdown = `# ${cleanTitle}\n\n---\n\n${summary || SUMMARY_PLACEHOLDER}\n`;
 
         return (
           <List.Item
@@ -141,7 +116,7 @@ export default function Command() {
                     ) : (
                       <List.Item.Detail.Metadata.Label
                         title="Topics"
-                        text="Not available"
+                        text={DEFAULT_METADATA_PLACEHOLDER}
                         icon={Icon.Tag}
                       />
                     )}
@@ -164,7 +139,7 @@ export default function Command() {
                   title="Refresh"
                   icon={Icon.RotateClockwise}
                   onAction={() => {
-                    void fetchArticles();
+                    void revalidate();
                   }}
                   shortcut={{ modifiers: ["cmd"], key: "r" }}
                 />

@@ -1,11 +1,4 @@
-import {
-  ActionPanel,
-  Action,
-  List,
-  Icon,
-  showToast,
-  Toast,
-} from "@raycast/api";
+import { ActionPanel, Action, List, Icon } from "@raycast/api";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   searchArticles,
@@ -13,7 +6,7 @@ import {
   extractArticleId,
 } from "./api/client";
 import { Article } from "./api/type";
-import { formatDate } from "./utils/formatDate";
+import { showFailureToast } from "@raycast/utils";
 import {
   cleanDescription,
   extractTags,
@@ -21,10 +14,14 @@ import {
   getArticleIcon,
   getArticleUrl,
   getTagColor,
+  DEFAULT_METADATA_PLACEHOLDER,
+  resolvePublishedDate,
 } from "./utils/article";
 
 const MAX_TAGS = 6;
 const DEBOUNCE_IN_MS = 300;
+const SUMMARY_PLACEHOLDER = "No summary available.";
+const UNTITLED_ARTICLE = "Untitled";
 
 export default function Command() {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -57,7 +54,7 @@ export default function Command() {
       const message = err instanceof Error ? err.message : String(err);
       setError(message);
       setArticles([]);
-      await showToast(Toast.Style.Failure, "Unable to search Público", message);
+      await showFailureToast("Unable to search Público", message);
     } finally {
       setIsLoading(false);
     }
@@ -90,11 +87,7 @@ export default function Command() {
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      await showToast(
-        Toast.Style.Failure,
-        "Unable to load article details",
-        message,
-      );
+      await showFailureToast("Unable to load article details", message);
     } finally {
       setIsLoadingDetails(false);
     }
@@ -169,7 +162,7 @@ export default function Command() {
         ? emptyView
         : articles.map((article, index) => {
             const cleanTitle =
-              article.titulo?.replace(/<[^>]*>/g, "") || "Untitled";
+              article.titulo?.replace(/<[^>]*>/g, "") || UNTITLED_ARTICLE;
             const articleUrl = getArticleUrl(article);
             const articleId = extractArticleId(articleUrl);
             const enrichedData = articleId
@@ -185,23 +178,10 @@ export default function Command() {
 
             const summarySource = enrichedData?.descricao ?? article.descricao;
             const summary = cleanDescription(summarySource);
-            const publishedDate = (() => {
-              const timestamp =
-                enrichedData?.data ?? article.data ?? article.time ?? "";
-
-              if (!timestamp) {
-                return "Not available";
-              }
-
-              if (timestamp.includes("0001-01-01")) {
-                return "Not available";
-              }
-
-              return formatDate(timestamp);
-            })();
+            const publishedDate = resolvePublishedDate(enrichedData ?? article);
 
             const icon = getArticleIcon(article);
-            const detailMarkdown = `# ${cleanTitle}\n\n---\n\n${summary || "No summary available."}\n`;
+            const detailMarkdown = `# ${cleanTitle}\n\n---\n\n${summary || SUMMARY_PLACEHOLDER}\n`;
             const isSelected =
               articleId === selectedArticleId && isLoadingDetails;
 
@@ -238,7 +218,7 @@ export default function Command() {
                         ) : (
                           <List.Item.Detail.Metadata.Label
                             title="Keywords"
-                            text="Not available"
+                            text={DEFAULT_METADATA_PLACEHOLDER}
                             icon={Icon.Tag}
                           />
                         )}
