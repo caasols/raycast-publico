@@ -28,11 +28,6 @@ cd raycast-publico
 npm install
 npm run dev
 ```
-
-- `npm run lint` — check coding style and Raycast best practices
-- `npm run fix-lint` — automatically fix linting issues (where possible)
-- `npm run build` — bundle the extension for release
-
 ## 🤝 Contributing
 Issues and pull requests are welcome! Please open a discussion if you plan to work on a larger change so we can align on the approach.
 
