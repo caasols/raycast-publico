@@ -151,17 +151,18 @@ export async function fetchArticleDetail(
     const text = await response.text();
 
     if (!text || text.trim() === "") {
-      throw new Error("Empty response from server");
+      // Empty response is not an error - just return null
+      console.log(`Empty response for article ${articleId}`);
+      return null;
     }
 
     try {
       const data = JSON.parse(text);
       return ensureArticle(data);
-    } catch (parseError) {
+    } catch {
       console.error("JSON parse error, response was:", text.substring(0, 200));
-      throw new Error(
-        `Invalid JSON response from server: ${parseError instanceof Error ? parseError.message : String(parseError)}`,
-      );
+      // Return null instead of throwing - some articles may have malformed data
+      return null;
     }
   } catch (error) {
     // Don't log abort errors as they're intentional

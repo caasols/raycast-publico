@@ -111,11 +111,8 @@ export default function Command() {
           return;
         }
 
-        const message = err instanceof Error ? err.message : String(err);
-        await showFailureToast({
-          title: "Unable to load article details",
-          message,
-        });
+        // Log error but don't show toast - some articles may not have details
+        console.error("Error loading article details:", err);
       } finally {
         setIsLoadingDetails(false);
       }
