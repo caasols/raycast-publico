@@ -1,12 +1,12 @@
 import { ActionPanel, Action, List, Icon } from "@raycast/api";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   searchArticles,
   fetchArticleDetail,
   extractArticleId,
 } from "./api/client";
 import { Article } from "./api/type";
-import { showFailureToast } from "@raycast/utils";
+import { showFailureToast, useCachedPromise } from "@raycast/utils";
 import {
   cleanDescription,
   extractTags,
@@ -19,98 +19,129 @@ import {
 } from "./utils/article";
 
 const MAX_TAGS = 6;
-const DEBOUNCE_IN_MS = 300;
 const SUMMARY_PLACEHOLDER = "No summary available.";
 const UNTITLED_ARTICLE = "Untitled";
+const DETAIL_LOAD_DEBOUNCE_MS = 150;
 
 export default function Command() {
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [enrichedArticles, setEnrichedArticles] = useState<
-    Map<string, Article>
-  >(new Map());
-  const [isLoading, setIsLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [selectedArticleId, setSelectedArticleId] = useState<string | null>(
     null,
   );
+  const [pendingArticle, setPendingArticle] = useState<Article | null>(null);
+  const [enrichedArticles, setEnrichedArticles] = useState<
+    Record<string, Article>
+  >({});
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const performSearch = useCallback(async (query: string) => {
-    if (!query.trim()) {
-      setArticles([]);
-      setEnrichedArticles(new Map());
-      setError(null);
-      return;
-    }
+  // Track the current abort controller to cancel in-flight requests
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-    try {
-      setIsLoading(true);
-      setError(null);
-      const data = await searchArticles(query);
-      setArticles(data);
-      setEnrichedArticles(new Map());
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      setError(message);
-      setArticles([]);
-      await showFailureToast({ title: "Unable to search Público", message });
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  async function loadArticleDetails(article: Article) {
-    if (!article) {
-      return;
-    }
-
-    const articleUrl = getArticleUrl(article);
-    const articleId = extractArticleId(articleUrl);
-    if (!articleId || enrichedArticles.has(articleId)) {
-      return;
-    }
-
-    try {
-      setIsLoadingDetails(true);
-      setSelectedArticleId(articleId);
-
-      const detail = await fetchArticleDetail(articleId);
-      if (!detail) {
-        return;
+  // Main search with automatic debouncing and caching
+  const {
+    data: articles = [],
+    isLoading,
+    error,
+    revalidate,
+  } = useCachedPromise(
+    async (query: string) => {
+      if (!query.trim()) {
+        return [];
       }
+      return await searchArticles(query);
+    },
+    [searchText],
+    {
+      keepPreviousData: true,
+      initialData: [],
+      onError: (err) => {
+        const message = err instanceof Error ? err.message : String(err);
+        void showFailureToast({ title: "Unable to search Público", message });
+      },
+    },
+  );
 
-      setEnrichedArticles((prev) => {
-        const updated = new Map(prev);
-        updated.set(articleId, detail);
-        return updated;
-      });
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      await showFailureToast({
-        title: "Unable to load article details",
-        message,
-      });
-    } finally {
-      setIsLoadingDetails(false);
-    }
-  }
-
+  // Debounce article detail loading to reduce API calls when scrolling quickly
   useEffect(() => {
-    const timer = setTimeout(() => {
-      void performSearch(searchText);
-    }, DEBOUNCE_IN_MS);
+    if (!pendingArticle) {
+      return;
+    }
 
-    return () => clearTimeout(timer);
-  }, [performSearch, searchText]);
+    const articleUrl = getArticleUrl(pendingArticle);
+    const articleId = extractArticleId(articleUrl);
+
+    // Skip if already loaded
+    if (!articleId || enrichedArticles[articleId]) {
+      return;
+    }
+
+    // Clear any existing debounce timer
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    // Cancel any previous in-flight request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // Set new debounce timer
+    debounceTimerRef.current = setTimeout(async () => {
+      // Create new abort controller for this request
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+
+      try {
+        setIsLoadingDetails(true);
+        setSelectedArticleId(articleId);
+
+        const detail = await fetchArticleDetail(articleId, controller.signal);
+        if (!detail) {
+          return;
+        }
+
+        setEnrichedArticles((prev) => ({
+          ...prev,
+          [articleId]: detail,
+        }));
+      } catch (err) {
+        // Ignore abort errors - they're intentional when user switches articles
+        if (err instanceof Error && err.name === "AbortError") {
+          return;
+        }
+
+        const message = err instanceof Error ? err.message : String(err);
+        await showFailureToast({
+          title: "Unable to load article details",
+          message,
+        });
+      } finally {
+        setIsLoadingDetails(false);
+      }
+    }, DETAIL_LOAD_DEBOUNCE_MS);
+
+    // Cleanup timer on unmount or when pendingArticle changes
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [pendingArticle, enrichedArticles]);
+
+  const errorMessage = error
+    ? error instanceof Error
+      ? error.message
+      : String(error)
+    : null;
 
   const emptyView = useMemo(() => {
-    if (error) {
+    if (errorMessage) {
       return (
         <List.EmptyView
           icon={Icon.ExclamationMark}
           title="Unable to fetch results"
-          description={error}
+          description={errorMessage}
         />
       );
     }
@@ -136,7 +167,7 @@ export default function Command() {
     }
 
     return null;
-  }, [articles.length, error, isLoading, searchText]);
+  }, [articles.length, errorMessage, isLoading, searchText]);
 
   return (
     <List
@@ -157,7 +188,8 @@ export default function Command() {
           : articles[index];
 
         if (selectedArticle) {
-          void loadArticleDetails(selectedArticle);
+          // Set pending article to trigger debounced loading
+          setPendingArticle(selectedArticle);
         }
       }}
     >
@@ -169,7 +201,7 @@ export default function Command() {
             const articleUrl = getArticleUrl(article);
             const articleId = extractArticleId(articleUrl);
             const enrichedData = articleId
-              ? enrichedArticles.get(articleId)
+              ? enrichedArticles[articleId]
               : undefined;
 
             const authorText = formatAuthors(
@@ -244,7 +276,7 @@ export default function Command() {
                       title="Refresh"
                       icon={Icon.RotateClockwise}
                       onAction={() => {
-                        void performSearch(searchText);
+                        void revalidate();
                       }}
                       shortcut={{ modifiers: ["cmd"], key: "r" }}
                     />
