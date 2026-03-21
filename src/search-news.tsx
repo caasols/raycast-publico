@@ -1,4 +1,4 @@
-import { ActionPanel, Action, List, Icon } from "@raycast/api";
+import { List, Icon } from "@raycast/api";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   searchArticles,
@@ -7,21 +7,9 @@ import {
 } from "./api/client";
 import { Article } from "./api/type";
 import { showFailureToast, useCachedPromise } from "@raycast/utils";
-import {
-  cleanDescription,
-  extractTags,
-  formatAuthors,
-  getArticleIcon,
-  getArticleUrl,
-  getTagColor,
-  DEFAULT_METADATA_PLACEHOLDER,
-  resolvePublishedDate,
-} from "./utils/article";
-
-const MAX_TAGS = 6;
-const SUMMARY_PLACEHOLDER = "No summary available.";
-const UNTITLED_ARTICLE = "Untitled";
-const DETAIL_LOAD_DEBOUNCE_MS = 150;
+import { getArticleUrl } from "./utils/article";
+import { ArticleListItem } from "./components/ArticleListItem";
+import { DETAIL_LOAD_DEBOUNCE_MS } from "./constants";
 
 export default function Command() {
   const [searchText, setSearchText] = useState("");
@@ -193,92 +181,24 @@ export default function Command() {
       {emptyView
         ? emptyView
         : articles.map((article, index) => {
-            const cleanTitle =
-              article.titulo?.replace(/<[^>]*>/g, "") || UNTITLED_ARTICLE;
             const articleUrl = getArticleUrl(article);
             const articleId = extractArticleId(articleUrl);
             const enrichedData = articleId
               ? enrichedArticles[articleId]
               : undefined;
-
-            const authorText = formatAuthors(
-              enrichedData?.autores ?? article.autores,
-            );
-            const extractedTags = extractTags(
-              enrichedData?.tags ?? article.tags,
-            ).slice(0, MAX_TAGS);
-
-            const summarySource = enrichedData?.descricao ?? article.descricao;
-            const summary = cleanDescription(summarySource);
-            const publishedDate = resolvePublishedDate(enrichedData ?? article);
-
-            const icon = getArticleIcon(article);
-            const detailMarkdown = `# ${cleanTitle}\n\n---\n\n${summary || SUMMARY_PLACEHOLDER}\n`;
             const isSelected =
               articleId === selectedArticleId && isLoadingDetails;
 
             return (
-              <List.Item
+              <ArticleListItem
                 key={`article-${index}`}
-                id={`article-${index}`}
-                icon={icon}
-                title={cleanTitle}
-                detail={
-                  <List.Item.Detail
-                    isLoading={isSelected}
-                    markdown={detailMarkdown}
-                    metadata={
-                      <List.Item.Detail.Metadata>
-                        <List.Item.Detail.Metadata.Label
-                          title="Author"
-                          text={authorText}
-                        />
-                        <List.Item.Detail.Metadata.Label
-                          title="Published"
-                          text={publishedDate}
-                        />
-                        {extractedTags.length > 0 ? (
-                          <List.Item.Detail.Metadata.TagList title="Keywords">
-                            {extractedTags.map((tag, tagIndex) => (
-                              <List.Item.Detail.Metadata.TagList.Item
-                                key={`tag-${tagIndex}`}
-                                text={tag}
-                                color={getTagColor(tagIndex)}
-                              />
-                            ))}
-                          </List.Item.Detail.Metadata.TagList>
-                        ) : (
-                          <List.Item.Detail.Metadata.Label
-                            title="Keywords"
-                            text={DEFAULT_METADATA_PLACEHOLDER}
-                            icon={Icon.Tag}
-                          />
-                        )}
-                      </List.Item.Detail.Metadata>
-                    }
-                  />
-                }
-                actions={
-                  <ActionPanel>
-                    <Action.OpenInBrowser
-                      title="Open in Browser"
-                      url={articleUrl}
-                    />
-                    <Action.CopyToClipboard
-                      title="Copy URL"
-                      content={articleUrl}
-                      shortcut={{ modifiers: ["cmd"], key: "c" }}
-                    />
-                    <Action
-                      title="Refresh"
-                      icon={Icon.RotateClockwise}
-                      onAction={() => {
-                        void revalidate();
-                      }}
-                      shortcut={{ modifiers: ["cmd"], key: "r" }}
-                    />
-                  </ActionPanel>
-                }
+                article={article}
+                index={index}
+                enrichedArticle={enrichedData}
+                isLoadingDetail={isSelected}
+                onRefresh={() => {
+                  void revalidate();
+                }}
               />
             );
           })}
