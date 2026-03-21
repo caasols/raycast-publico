@@ -116,15 +116,38 @@ This roadmap tracks the V2 refactor effort. It was produced from a comprehensive
 
 ## Phase 10: Read the News
 
+**Key constraint**: The API only returns a description/lead and the article URL (or an ID to construct it). It does **not** return the full article body. To read full articles, we must fetch and parse the actual publico.pt article page. Additionally, publico.pt may paywall articles for non-subscribers, meaning full content may simply not be available.
+
+**Strategy**: Break this into small, testable steps. Each step produces a clear pass/fail signal so we can decide early whether this direction is viable before investing more effort.
+
+### Step 1 — Feasibility check (go/no-go gate)
+
 | Task | Description | Status |
 |------|-------------|--------|
-| 10.1 | Verify `fetchArticleDetail()` returns full article body (`body` or `texto` fields) — check against multiple articles | Planned |
-| 10.2 | Improve `ArticleView` markdown rendering — handle images (`imagem`, `multimediaPrincipal`), blockquotes, and embedded media gracefully | Planned |
-| 10.3 | Add loading state to `ArticleView` — show `isLoading` while fetching full content, with a meaningful placeholder | Planned |
-| 10.4 | Handle paywalled / premium articles — detect when body is truncated or missing, show a clear message with "Open in Browser" as primary action | Planned |
-| 10.5 | Test article reading across different article types (opinion, news, multimedia, live blog) to ensure consistent rendering | Planned |
+| 10.1 | Confirm what the API actually returns — log the full response from `fetchArticleDetail()` for 5+ articles and document which fields contain content (`texto`, `body`, `lead`, `descricao`) | Planned |
+| 10.2 | Fetch a real article URL (e.g., `https://www.publico.pt/...`) from Raycast with browser-like headers — check if HTML is returned or if it's blocked (403, redirect to login, CAPTCHA) | Planned |
+| 10.3 | Compare free vs. premium articles — fetch at least one of each and document what HTML/content is available without authentication | Planned |
 
-**Why this matters**: The reading view is the core value proposition. If articles don't render well, summarization (Phase 11) will produce poor results since it depends on the same content.
+**Decision point**: If both the API detail endpoint and direct HTML fetch fail to return usable content, stop here. Document findings and move to Phase 11 using only the description/lead for summarization.
+
+### Step 2 — HTML parsing (only if Step 1 passes)
+
+| Task | Description | Status |
+|------|-------------|--------|
+| 10.4 | Identify the article body selector in the publico.pt HTML — inspect the DOM structure, find the element(s) containing the article text | Planned |
+| 10.5 | Write a `parseArticleHtml(html: string)` utility that extracts the article body as plain text or markdown — keep it minimal, no heavy dependencies | Planned |
+| 10.6 | Test the parser against 5+ articles of different types (news, opinion, multimedia) — verify it handles variations in page structure | Planned |
+
+### Step 3 — Integration (only if Step 2 produces usable content)
+
+| Task | Description | Status |
+|------|-------------|--------|
+| 10.7 | Create `fetchArticleContent(url: string)` in `client.ts` — fetches the article page HTML and runs it through `parseArticleHtml()` | Planned |
+| 10.8 | Update `ArticleView` to call `fetchArticleContent()` — show loading state while fetching, render the parsed content as markdown | Planned |
+| 10.9 | Handle paywalled articles gracefully — detect truncated or missing body, show a clear message ("This article requires a Público subscription") with "Open in Browser" as the primary action | Planned |
+| 10.10 | Handle fetch failures — if the HTML fetch is blocked (403, timeout), fall back to showing the API description/lead with a note that full content is unavailable | Planned |
+
+**Why testable chunks matter**: We don't know yet if publico.pt will serve full article HTML to non-browser clients or without auth. Each step gives us a clear signal before investing in the next. If this direction is a dead end, we still have the API description/lead to work with for summarization in Phase 11.
 
 ---
 
