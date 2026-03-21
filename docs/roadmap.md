@@ -84,16 +84,46 @@ This roadmap tracks the V2 refactor effort. It was produced from a comprehensive
 
 ---
 
-## Phase 8: Fix Broken Search
+## Phase 8: Panel Config — Set Actions
 
 | Task | Description | Status |
 |------|-------------|--------|
-| 8.1 | Add browser-like request headers (`User-Agent`, `Referer`) to API calls | Planned |
-| 8.2 | Add endpoint fallback logic for search | Planned |
-| 8.3 | Add configurable base URL via Raycast preferences | Planned |
-| 8.4 | Local testing required — verify working endpoint via browser DevTools | Planned |
+| 8.1 | Configure panel actions in the extension command config | Planned |
 
-**Why last**: The search endpoint cannot be verified from automated environments (publico.pt blocks non-browser requests). This phase requires manual local testing.
+---
+
+## Phase 9: Fix Broken Search
+
+| Task | Description | Status |
+|------|-------------|--------|
+| 9.1 | Add browser-like request headers (`User-Agent`, `Referer`) to API calls | Planned |
+| 9.2 | Add endpoint fallback logic for search | Planned |
+| 9.3 | Add configurable base URL via Raycast preferences | Planned |
+| 9.4 | Local testing required — verify working endpoint via browser DevTools | Planned |
+
+---
+
+## Phase 10: Read the News
+
+| Task | Description | Status |
+|------|-------------|--------|
+| 10.1 | Verify full article content can be fetched and rendered | Planned |
+
+---
+
+## Phase 11: Summarize Articles
+
+| Task | Description | Status |
+|------|-------------|--------|
+| 11.1 | Add article summarization functionality | Planned |
+
+---
+
+## Phase 12: Persist Summaries to Memory
+
+| Task | Description | Status |
+|------|-------------|--------|
+| 12.1 | Save summaries as they are created so they persist across sessions | Planned |
 
 ---
 
