@@ -43,9 +43,9 @@ This roadmap tracks the V2 refactor effort. It was produced from a comprehensive
 
 | Task | Description | Status |
 |------|-------------|--------|
-| 4.1 | Use `article.id` as React key instead of array index | Planned |
-| 4.2 | Wrap `ArticleListItem` with `React.memo` | Planned |
-| 4.3 | Add `useCallback` for action handlers | Planned |
+| 4.1 | Use `article.id` as React key and List.Item id — removed `index` prop | Done |
+| 4.2 | Wrap `ArticleListItem` with `React.memo` | Done |
+| 4.3 | Add `useCallback` for `onRefresh` in `NewsListView` and `search-news` | Done |
 
 ---
 

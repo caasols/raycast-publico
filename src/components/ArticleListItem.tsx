@@ -1,4 +1,5 @@
 import { ActionPanel, Action, List, Icon } from "@raycast/api";
+import { memo } from "react";
 import { Article } from "../api/type";
 import { extractArticleId } from "../api/client";
 import {
@@ -16,15 +17,13 @@ import { ArticleView } from "./ArticleView";
 
 interface ArticleListItemProps {
   article: Article;
-  index: number;
   enrichedArticle?: Article;
   isLoadingDetail?: boolean;
   onRefresh: () => void;
 }
 
-export function ArticleListItem({
+function ArticleListItemComponent({
   article,
-  index,
   enrichedArticle,
   isLoadingDetail,
   onRefresh,
@@ -33,6 +32,7 @@ export function ArticleListItem({
     article.titulo?.replace(/<[^>]*>/g, "") || UNTITLED_ARTICLE;
   const articleUrl = getArticleUrl(article);
   const articleId = extractArticleId(articleUrl);
+  const itemId = String(article.id);
 
   const authorText = formatAuthors(enrichedArticle?.autores ?? article.autores);
   const extractedTags = extractTags(
@@ -48,8 +48,7 @@ export function ArticleListItem({
 
   return (
     <List.Item
-      key={`article-${index}`}
-      id={`article-${index}`}
+      id={itemId}
       icon={icon}
       title={cleanTitle}
       detail={
@@ -70,7 +69,7 @@ export function ArticleListItem({
                 <List.Item.Detail.Metadata.TagList title="Keywords">
                   {extractedTags.map((tag, tagIndex) => (
                     <List.Item.Detail.Metadata.TagList.Item
-                      key={`${articleId ?? index}-tag-${tagIndex}`}
+                      key={`${articleId ?? itemId}-tag-${tagIndex}`}
                       text={tag}
                       color={getTagColor(tagIndex)}
                     />
@@ -113,3 +112,5 @@ export function ArticleListItem({
     />
   );
 }
+
+export const ArticleListItem = memo(ArticleListItemComponent);
