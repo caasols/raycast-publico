@@ -1,17 +1,16 @@
 import { ActionPanel, Action, Detail } from "@raycast/api";
 import { useEffect, useState } from "react";
-import { fetchArticleDetail, extractArticleId } from "./api/client";
-import { formatDate } from "./utils/formatDate";
-import { Article } from "./api/type";
-import { formatAuthors } from "./utils/article";
+import { fetchArticleDetail, extractArticleId } from "../api/client";
+import { formatDate } from "../utils/formatDate";
+import { Article } from "../api/type";
+import { formatAuthors } from "../utils/article";
 
 interface ArticleViewProps {
   articleUrl: string;
   articleTitle: string;
 }
 
-export default function ArticleView(props: ArticleViewProps) {
-  const { articleUrl, articleTitle } = props;
+export function ArticleView({ articleUrl, articleTitle }: ArticleViewProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [article, setArticle] = useState<Article | null>(null);
   const [error, setError] = useState<string | null>(null);
