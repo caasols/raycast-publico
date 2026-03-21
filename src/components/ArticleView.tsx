@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { fetchArticleDetail, extractArticleId } from "../api/client";
 import { formatDate } from "../utils/formatDate";
 import { Article } from "../api/type";
-import { formatAuthors } from "../utils/article";
+import { formatAuthors, stripHtml } from "../utils/article";
 
 interface ArticleViewProps {
   articleUrl: string;
@@ -68,7 +68,7 @@ export function ArticleView({ articleUrl, articleTitle }: ArticleViewProps) {
 
     return `# ${title}\n\n*${authors} • ${publishedDate}*\n\n${lead ? `**${lead}**\n\n` : ""}${
       hasContent
-        ? body.replace(/<[^>]*>/g, "")
+        ? stripHtml(body)
         : "To read the full article, please click 'Open in Browser'.\n\nThe full content of this article is only available on the Público website.*"
     }\n`;
   }

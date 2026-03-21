@@ -64,10 +64,10 @@ This roadmap tracks the V2 refactor effort. It was produced from a comprehensive
 
 | Task | Description | Status |
 |------|-------------|--------|
-| 6.1 | Fix no-op `.replace(",", ",")` in `formatDate.ts` | Planned |
-| 6.2 | Create `stripHtml()` utility that handles HTML entities | Planned |
-| 6.3 | Fix `CHANGELOG.md` uninterpolated `PR_MERGE_DATE` | Planned |
-| 6.4 | Remove unnecessary `as` type casts in `article.ts` | Planned |
+| 6.1 | Fix no-op `.replace(",", ",")` in `formatDate.ts` | Done |
+| 6.2 | Create `stripHtml()` utility — handles tags + HTML entities (`&amp;`, `&lt;`, etc.) | Done |
+| 6.3 | Fix `CHANGELOG.md` uninterpolated `PR_MERGE_DATE` | Done |
+| 6.4 | Remove unnecessary `as` type casts in `article.ts` | Done (Phase 2) |
 
 ---
 
