@@ -1,4 +1,12 @@
-import { ActionPanel, Action, List, Icon } from "@raycast/api";
+import {
+  ActionPanel,
+  Action,
+  Detail,
+  List,
+  Icon,
+  showToast,
+  Toast,
+} from "@raycast/api";
 import { memo } from "react";
 import { Article } from "../api/type";
 import { extractArticleId } from "../api/client";
@@ -20,6 +28,7 @@ interface ArticleListItemProps {
   article: Article;
   enrichedArticle?: Article;
   isLoadingDetail?: boolean;
+  savedSummary?: string;
   onRefresh: () => void;
 }
 
@@ -27,6 +36,7 @@ function ArticleListItemComponent({
   article,
   enrichedArticle,
   isLoadingDetail,
+  savedSummary,
   onRefresh,
 }: ArticleListItemProps) {
   const cleanTitle =
@@ -106,6 +116,44 @@ function ArticleListItemComponent({
             title="Copy Title"
             content={cleanTitle}
             shortcut={{ modifiers: ["cmd", "shift"], key: "c" }}
+          />
+          {savedSummary && (
+            <Action.Push
+              title="View Summary"
+              icon={Icon.Document}
+              shortcut={{ modifiers: ["cmd", "shift"], key: "v" }}
+              target={
+                <Detail
+                  navigationTitle={`Summary: ${cleanTitle}`}
+                  markdown={`# ${cleanTitle}\n\n---\n\n${savedSummary}`}
+                  actions={
+                    <ActionPanel>
+                      <Action.OpenInBrowser
+                        title="Open in Browser"
+                        url={articleUrl}
+                      />
+                      <Action.CopyToClipboard
+                        title="Copy Summary"
+                        content={savedSummary}
+                        shortcut={{ modifiers: ["cmd"], key: "c" }}
+                      />
+                    </ActionPanel>
+                  }
+                />
+              }
+            />
+          )}
+          <Action
+            title="Summarize"
+            icon={Icon.Stars}
+            shortcut={{ modifiers: ["cmd", "shift"], key: "s" }}
+            onAction={() =>
+              showToast({
+                style: Toast.Style.Failure,
+                title: "Not available yet",
+                message: "Summarization will be available in a future update",
+              })
+            }
           />
           <Action
             title="Refresh"
