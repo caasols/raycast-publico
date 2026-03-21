@@ -1,8 +1,9 @@
-import { List, Icon } from "@raycast/api";
+import { ActionPanel, Action, List, Icon } from "@raycast/api";
 import { useCallback } from "react";
 import { showFailureToast, useCachedPromise } from "@raycast/utils";
 import { Article } from "../api/type";
 import { ArticleListItem } from "./ArticleListItem";
+import { getMaxArticles } from "../preferences";
 
 interface NewsListViewProps {
   fetchFn: () => Promise<Article[]>;
@@ -31,7 +32,8 @@ export function NewsListView({
     void revalidate();
   }, [revalidate]);
 
-  const articles = data ?? [];
+  const maxArticles = getMaxArticles();
+  const articles = (data ?? []).slice(0, maxArticles);
   const errorMessage = error
     ? error instanceof Error
       ? error.message
@@ -42,13 +44,23 @@ export function NewsListView({
     return (
       <List
         isLoading={isLoading}
-        isShowingDetail
+        isShowingDetail={false}
         searchBarPlaceholder={searchBarPlaceholder}
       >
         <List.EmptyView
           icon={Icon.ExclamationMark}
           title="Unable to load Público news"
-          description={errorMessage}
+          description={`${errorMessage}\n\nPress ⌘R to retry.`}
+          actions={
+            <ActionPanel>
+              <Action
+                title="Retry"
+                icon={Icon.RotateClockwise}
+                onAction={handleRefresh}
+                shortcut={{ modifiers: ["cmd"], key: "r" }}
+              />
+            </ActionPanel>
+          }
         />
       </List>
     );
@@ -58,13 +70,23 @@ export function NewsListView({
     return (
       <List
         isLoading={isLoading}
-        isShowingDetail
+        isShowingDetail={false}
         searchBarPlaceholder={searchBarPlaceholder}
       >
         <List.EmptyView
           icon={Icon.Document}
           title={emptyTitle}
           description={emptyDescription}
+          actions={
+            <ActionPanel>
+              <Action
+                title="Retry"
+                icon={Icon.RotateClockwise}
+                onAction={handleRefresh}
+                shortcut={{ modifiers: ["cmd"], key: "r" }}
+              />
+            </ActionPanel>
+          }
         />
       </List>
     );

@@ -10,6 +10,7 @@ import { showFailureToast, useCachedPromise } from "@raycast/utils";
 import { getArticleUrl } from "./utils/article";
 import { ArticleListItem } from "./components/ArticleListItem";
 import { DETAIL_LOAD_DEBOUNCE_MS } from "./constants";
+import { getMaxArticles } from "./preferences";
 
 export default function Command() {
   const [searchText, setSearchText] = useState("");
@@ -27,8 +28,10 @@ export default function Command() {
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Main search with automatic debouncing and caching
+  const maxArticles = getMaxArticles();
+
   const {
-    data: articles = [],
+    data: rawArticles = [],
     isLoading,
     error,
     revalidate,
@@ -49,6 +52,8 @@ export default function Command() {
       },
     },
   );
+
+  const articles = rawArticles.slice(0, maxArticles);
 
   const handleRefresh = useCallback(() => {
     void revalidate();
