@@ -32,12 +32,14 @@ function classifyError(error: unknown, context: string): Error {
       return error;
     }
     if (error.name === "TimeoutError") {
-      return new Error(`${context}: request timed out`);
+      return new Error(
+        `${context}: the request took too long. Please try again.`,
+      );
     }
     // Network errors (DNS failure, connection refused, etc.)
     if (error instanceof TypeError) {
       return new Error(
-        `${context}: network error — check your internet connection`,
+        `${context}: could not connect. Please check your internet connection.`,
       );
     }
     return error;
@@ -74,14 +76,14 @@ async function fetchArticleList(
 export async function fetchLatestHeadlines(): Promise<Article[]> {
   return fetchArticleList(
     `${BASE_URL}/list/ultimas`,
-    "Failed to fetch latest headlines",
+    "Unable to load latest headlines",
   );
 }
 
 export async function fetchTopNews(): Promise<Article[]> {
   return fetchArticleList(
     `${BASE_URL}/list/destaque`,
-    "Failed to fetch top news",
+    "Unable to load popular news",
   );
 }
 
@@ -89,7 +91,7 @@ export async function searchArticles(query: string): Promise<Article[]> {
   const encodedQuery = encodeURIComponent(query);
   return fetchArticleList(
     `${BASE_URL}/list/search?query=${encodedQuery}`,
-    "Failed to search articles",
+    "Unable to search articles",
   );
 }
 
@@ -145,7 +147,7 @@ export async function fetchArticleDetail(
   articleId: string,
   signal?: AbortSignal,
 ): Promise<Article | null> {
-  const context = "Failed to fetch article detail";
+  const context = "Unable to load article";
 
   try {
     if (!articleId) {
