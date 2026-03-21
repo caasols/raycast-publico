@@ -143,7 +143,7 @@ export default function Command() {
       return (
         <List.EmptyView
           icon={Icon.ExclamationMark}
-          title="Unable to fetch results"
+          title="Unable to load results"
           description={errorMessage}
         />
       );
@@ -153,8 +153,8 @@ export default function Command() {
       return (
         <List.EmptyView
           icon={Icon.MagnifyingGlass}
-          title="Search Público News"
-          description="Type a keyword to find articles."
+          title="Search Público"
+          description="Type a keyword to find articles from Público."
         />
       );
     }
@@ -164,7 +164,7 @@ export default function Command() {
         <List.EmptyView
           icon={Icon.XmarkCircle}
           title="No articles found"
-          description={`No results for '${searchText}'. Try another search.`}
+          description={`No results for "${searchText}". Try a different keyword.`}
         />
       );
     }

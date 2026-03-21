@@ -149,9 +149,10 @@ function ArticleListItemComponent({
             shortcut={{ modifiers: ["cmd", "shift"], key: "s" }}
             onAction={() =>
               showToast({
-                style: Toast.Style.Failure,
-                title: "Not available yet",
-                message: "Summarization will be available in a future update",
+                style: Toast.Style.Animated,
+                title: "Coming soon",
+                message:
+                  "Article summarization will be available in a future update.",
               })
             }
           />

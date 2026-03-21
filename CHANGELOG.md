@@ -1,4 +1,4 @@
-# Raycast Publico Changelog
+# Raycast Público Changelog
 
 ## [1.0.0] - Initial Version
 

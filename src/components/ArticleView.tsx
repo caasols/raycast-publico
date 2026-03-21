@@ -22,7 +22,9 @@ export function ArticleView({ articleUrl, articleTitle }: ArticleViewProps) {
         const articleId = extractArticleId(articleUrl);
 
         if (!articleId) {
-          setError("Could not extract article ID from URL");
+          setError(
+            "This article can't be loaded right now. Try opening it in your browser.",
+          );
           setIsLoading(false);
           return;
         }
@@ -30,15 +32,17 @@ export function ArticleView({ articleUrl, articleTitle }: ArticleViewProps) {
         const data = await fetchArticleDetail(articleId);
 
         if (!data) {
-          setError("Article details are not available right now");
+          setError(
+            "This article isn't available right now. Try opening it in your browser.",
+          );
           setArticle(null);
           return;
         }
 
         setArticle(data);
-      } catch (err) {
+      } catch {
         setError(
-          `Error loading article: ${err instanceof Error ? err.message : String(err)}`,
+          `Something went wrong loading this article. Try opening it in your browser.`,
         );
       } finally {
         setIsLoading(false);
@@ -54,7 +58,7 @@ export function ArticleView({ articleUrl, articleTitle }: ArticleViewProps) {
     }
 
     if (!article) {
-      return `# ${articleTitle}\n\nLoading article preview...`;
+      return `# ${articleTitle}\n\nLoading article...`;
     }
 
     const title = article.titulo || articleTitle;
@@ -69,7 +73,7 @@ export function ArticleView({ articleUrl, articleTitle }: ArticleViewProps) {
     return `# ${title}\n\n*${authors} • ${publishedDate}*\n\n${lead ? `**${lead}**\n\n` : ""}${
       hasContent
         ? stripHtml(body)
-        : "To read the full article, please click 'Open in Browser'.\n\nThe full content of this article is only available on the Público website.*"
+        : "The full content of this article is only available on the Público website.\n\nUse **Open in Browser** to read it there."
     }\n`;
   }
 
