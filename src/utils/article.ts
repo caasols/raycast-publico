@@ -2,6 +2,25 @@ import { Color, Icon, Image } from "@raycast/api";
 import { formatDate } from "./formatDate";
 import { Article, AuthorLike, TagLike } from "../api/type";
 
+const HTML_ENTITIES: Record<string, string> = {
+  "&amp;": "&",
+  "&lt;": "<",
+  "&gt;": ">",
+  "&quot;": '"',
+  "&#39;": "'",
+  "&apos;": "'",
+  "&nbsp;": " ",
+};
+
+const ENTITY_PATTERN = /&(?:amp|lt|gt|quot|apos|nbsp|#39);/g;
+
+export function stripHtml(html: string): string {
+  return html
+    .replace(/<[^>]*>/g, "")
+    .replace(ENTITY_PATTERN, (match) => HTML_ENTITIES[match] ?? match)
+    .trim();
+}
+
 export const FALLBACK_URL = "https://www.publico.pt";
 export const DEFAULT_METADATA_PLACEHOLDER = "Not available";
 export const UNKNOWN_DATE_PLACEHOLDER = DEFAULT_METADATA_PLACEHOLDER;
