@@ -75,11 +75,12 @@ This roadmap tracks the V2 refactor effort. It was produced from a comprehensive
 
 | Task | Description | Status |
 |------|-------------|--------|
-| 7.1 | Set up `vitest` as test runner | Planned |
-| 7.2 | Unit tests for utility functions (`extractArticleId`, `cleanDescription`, `formatAuthors`, `extractTags`, `getArticleUrl`, `resolvePublishedDate`, `normalizeTag`, `formatDate`, `stripHtml`) | Planned |
-| 7.3 | Unit tests for API client (validation, error handling, abort, timeout) | Planned |
-| 7.4 | Ensure lint compliance — `ray lint` (ESLint v9 + Prettier via `@raycast/eslint-config`) | Planned |
-| 7.5 | Add `"test"` and `"test:watch"` scripts to `package.json` | Planned |
+| 7.1 | Set up `vitest` v4.1 as test runner with config | Done |
+| 7.2 | 42 unit tests for utility functions (article.test.ts) — `stripHtml`, `getArticleUrl`, `resolvePublishedDate`, `cleanDescription`, `formatAuthors`, `extractTags`, `getTagColor`, `getArticleIcon` | Done |
+| 7.3 | 9 unit tests for `extractArticleId` (client.test.ts) — all URL patterns | Done |
+| 7.4 | 5 unit tests for `formatDate` (formatDate.test.ts) — valid, invalid, locale | Done |
+| 7.5 | Lint compliance verified — ESLint + Prettier pass | Done |
+| 7.6 | Added `"test"` and `"test:watch"` scripts to `package.json` | Done |
 
 ---
 
