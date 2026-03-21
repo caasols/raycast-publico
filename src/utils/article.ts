@@ -1,6 +1,6 @@
 import { Color, Icon, Image } from "@raycast/api";
 import { formatDate } from "./formatDate";
-import { Article, TagLike } from "../api/type";
+import { Article, AuthorLike, TagLike } from "../api/type";
 
 export const FALLBACK_URL = "https://www.publico.pt";
 export const DEFAULT_METADATA_PLACEHOLDER = "Not available";
@@ -75,8 +75,6 @@ export function cleanDescription(description?: string): string {
   return cleanedDesc;
 }
 
-type AuthorLike = string | { nome?: string; name?: string } | undefined | null;
-
 function extractAuthorName(author: AuthorLike): string | null {
   if (typeof author === "string") {
     return author;
@@ -102,7 +100,7 @@ export function formatAuthors(autores: Article["autores"]): string {
 
   if (Array.isArray(autores)) {
     const authorNames = autores
-      .map((author) => extractAuthorName(author as AuthorLike))
+      .map((author) => extractAuthorName(author))
       .filter((name): name is string => Boolean(name));
 
     return authorNames.length > 0
@@ -110,7 +108,7 @@ export function formatAuthors(autores: Article["autores"]): string {
       : DEFAULT_METADATA_PLACEHOLDER;
   }
 
-  const singleAuthor = extractAuthorName(autores as AuthorLike);
+  const singleAuthor = extractAuthorName(autores);
   if (singleAuthor) {
     return singleAuthor;
   }
@@ -118,16 +116,9 @@ export function formatAuthors(autores: Article["autores"]): string {
   return DEFAULT_METADATA_PLACEHOLDER;
 }
 
-type TagObject = {
-  nome?: string;
-  name?: string;
-  value?: string;
-  titulo?: string;
-  title?: string;
-  toString?: () => string;
-};
-
-function isTagObject(tag: TagLike | undefined): tag is TagObject {
+function isTagObject(
+  tag: TagLike | undefined,
+): tag is Exclude<TagLike, string> {
   return Boolean(tag) && typeof tag === "object";
 }
 
@@ -164,7 +155,7 @@ export function extractTags(tags: Article["tags"]): string[] {
 
   if (Array.isArray(tags)) {
     return tags
-      .map((tag) => normalizeTag(tag as TagLike))
+      .map((tag) => normalizeTag(tag))
       .filter(
         (tag) =>
           Boolean(tag) &&
@@ -174,7 +165,7 @@ export function extractTags(tags: Article["tags"]): string[] {
       );
   }
 
-  const normalized = normalizeTag(tags as TagLike);
+  const normalized = normalizeTag(tags);
   return normalized ? [normalized] : [];
 }
 

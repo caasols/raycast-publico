@@ -12,6 +12,7 @@ import {
   resolvePublishedDate,
 } from "../utils/article";
 import { MAX_TAGS, SUMMARY_PLACEHOLDER, UNTITLED_ARTICLE } from "../constants";
+import { ArticleView } from "./ArticleView";
 
 interface ArticleListItemProps {
   article: Article;
@@ -88,6 +89,13 @@ export function ArticleListItem({
       }
       actions={
         <ActionPanel>
+          <Action.Push
+            title="Read Article"
+            icon={Icon.Book}
+            target={
+              <ArticleView articleUrl={articleUrl} articleTitle={cleanTitle} />
+            }
+          />
           <Action.OpenInBrowser title="Open in Browser" url={articleUrl} />
           <Action.CopyToClipboard
             title="Copy URL"
