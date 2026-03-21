@@ -32,6 +32,21 @@
       "mode": "view"
     }
   ],
+  "preferences": [
+    {
+      "name": "maxArticles",
+      "title": "Max Articles",
+      "description": "Maximum number of articles to display in the list",
+      "type": "dropdown",
+      "required": false,
+      "default": "25",
+      "data": [
+        { "title": "10", "value": "10" },
+        { "title": "25", "value": "25" },
+        { "title": "50", "value": "50" }
+      ]
+    }
+  ],
   "dependencies": {
     "@raycast/api": "^1.99.0",
     "@raycast/utils": "^1.17.0"

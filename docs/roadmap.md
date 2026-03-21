@@ -53,10 +53,10 @@ This roadmap tracks the V2 refactor effort. It was produced from a comprehensive
 
 | Task | Description | Status |
 |------|-------------|--------|
-| 5.1 | Integrate article reading view via `Action.Push` | Planned |
-| 5.2 | Add "Copy Title" action | Planned |
-| 5.3 | Improve empty/error states with actionable messages and retry actions | Planned |
-| 5.4 | Add Raycast preferences (article count, date format) | Planned |
+| 5.1 | Integrate article reading view via `Action.Push` | Done (Phase 2) |
+| 5.2 | Add "Copy Title" action (⌘⇧C) | Done |
+| 5.3 | Add retry action to error/empty states, improve error descriptions | Done |
+| 5.4 | Add "Max Articles" preference (10/25/50) via `package.json` | Done |
 
 ---
 
