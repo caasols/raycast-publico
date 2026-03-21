@@ -1,83 +1,96 @@
 import { Article } from "./type";
 
-// Base Publico API URLs
 const BASE_URL = "https://www.publico.pt/api";
+const REQUEST_TIMEOUT_MS = 10_000;
 
-function ensureArticleArray(data: unknown): Article[] {
+// --- Response validation ---
+
+function isArticleLike(item: unknown): item is Article {
+  if (!item || typeof item !== "object") {
+    return false;
+  }
+  const obj = item as Record<string, unknown>;
+  return typeof obj.titulo === "string" && typeof obj.url === "string";
+}
+
+function validateArticleArray(data: unknown): Article[] {
   if (!Array.isArray(data)) {
     return [];
   }
-
-  return data as Article[];
+  return data.filter(isArticleLike);
 }
 
-function ensureArticle(data: unknown): Article | null {
-  if (!data || typeof data !== "object") {
-    return null;
+function validateArticle(data: unknown): Article | null {
+  return isArticleLike(data) ? data : null;
+}
+
+// --- Error classification ---
+
+function classifyError(error: unknown, context: string): Error {
+  if (error instanceof Error) {
+    if (error.name === "AbortError") {
+      return error;
+    }
+    if (error.name === "TimeoutError") {
+      return new Error(`${context}: request timed out`);
+    }
+    // Network errors (DNS failure, connection refused, etc.)
+    if (error instanceof TypeError) {
+      return new Error(
+        `${context}: network error — check your internet connection`,
+      );
+    }
+    return error;
   }
-
-  return data as Article;
+  return new Error(`${context}: ${String(error)}`);
 }
 
-// Fetch latest headlines
+// --- Shared fetch helpers ---
+
+async function fetchArticleList(
+  url: string,
+  context: string,
+): Promise<Article[]> {
+  try {
+    const response = await fetch(url, {
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `${context}: HTTP ${response.status} ${response.statusText}`,
+      );
+    }
+
+    const data = await response.json();
+    return validateArticleArray(data);
+  } catch (error) {
+    throw classifyError(error, context);
+  }
+}
+
+// --- Public API ---
+
 export async function fetchLatestHeadlines(): Promise<Article[]> {
-  try {
-    const response = await fetch(`${BASE_URL}/list/ultimas`);
-
-    if (!response.ok) {
-      throw new Error(
-        `Failed to fetch latest headlines: ${response.status} ${response.statusText}`,
-      );
-    }
-
-    const data = await response.json();
-    return ensureArticleArray(data);
-  } catch (error) {
-    console.error("Error fetching latest headlines:", error);
-    throw error;
-  }
+  return fetchArticleList(
+    `${BASE_URL}/list/ultimas`,
+    "Failed to fetch latest headlines",
+  );
 }
 
-// Fetch top news
 export async function fetchTopNews(): Promise<Article[]> {
-  try {
-    const response = await fetch(`${BASE_URL}/list/destaque`);
-
-    if (!response.ok) {
-      throw new Error(
-        `Failed to fetch top news: ${response.status} ${response.statusText}`,
-      );
-    }
-
-    const data = await response.json();
-    return ensureArticleArray(data);
-  } catch (error) {
-    console.error("Error fetching top news:", error);
-    throw error;
-  }
+  return fetchArticleList(
+    `${BASE_URL}/list/destaque`,
+    "Failed to fetch top news",
+  );
 }
 
-// Search articles
 export async function searchArticles(query: string): Promise<Article[]> {
-  try {
-    // Encode the query parameter
-    const encodedQuery = encodeURIComponent(query);
-    const url = `${BASE_URL}/list/search?query=${encodedQuery}`;
-
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      throw new Error(
-        `Failed to search articles: ${response.status} ${response.statusText}`,
-      );
-    }
-
-    const data = await response.json();
-    return ensureArticleArray(data);
-  } catch (error) {
-    console.error("Error searching articles:", error);
-    throw error;
-  }
+  const encodedQuery = encodeURIComponent(query);
+  return fetchArticleList(
+    `${BASE_URL}/list/search?query=${encodedQuery}`,
+    "Failed to search articles",
+  );
 }
 
 // Extract article ID from URL
@@ -132,6 +145,8 @@ export async function fetchArticleDetail(
   articleId: string,
   signal?: AbortSignal,
 ): Promise<Article | null> {
+  const context = "Failed to fetch article detail";
+
   try {
     if (!articleId) {
       throw new Error("Article ID is required");
@@ -139,11 +154,17 @@ export async function fetchArticleDetail(
 
     const url = `${BASE_URL}/content/news/${articleId}`;
 
-    const response = await fetch(url, { signal });
+    // Combine caller's abort signal with timeout
+    const timeoutSignal = AbortSignal.timeout(REQUEST_TIMEOUT_MS);
+    const combinedSignal = signal
+      ? AbortSignal.any([signal, timeoutSignal])
+      : timeoutSignal;
+
+    const response = await fetch(url, { signal: combinedSignal });
 
     if (!response.ok) {
       throw new Error(
-        `Failed to fetch article detail: ${response.status} ${response.statusText}`,
+        `${context}: HTTP ${response.status} ${response.statusText}`,
       );
     }
 
@@ -151,25 +172,21 @@ export async function fetchArticleDetail(
     const text = await response.text();
 
     if (!text || text.trim() === "") {
-      // Empty response is not an error - just return null
-      console.log(`Empty response for article ${articleId}`);
       return null;
     }
 
     try {
       const data = JSON.parse(text);
-      return ensureArticle(data);
+      return validateArticle(data);
     } catch {
       console.error("JSON parse error, response was:", text.substring(0, 200));
-      // Return null instead of throwing - some articles may have malformed data
       return null;
     }
   } catch (error) {
-    // Don't log abort errors as they're intentional
+    // Re-throw abort errors without wrapping — they're intentional
     if (error instanceof Error && error.name === "AbortError") {
       throw error;
     }
-    console.error("Error fetching article detail:", error);
-    throw error;
+    throw classifyError(error, context);
   }
 }
