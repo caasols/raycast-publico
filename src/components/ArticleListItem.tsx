@@ -101,6 +101,11 @@ function ArticleListItemComponent({
             content={articleUrl}
             shortcut={{ modifiers: ["cmd"], key: "c" }}
           />
+          <Action.CopyToClipboard
+            title="Copy Title"
+            content={cleanTitle}
+            shortcut={{ modifiers: ["cmd", "shift"], key: "c" }}
+          />
           <Action
             title="Refresh"
             icon={Icon.RotateClockwise}
