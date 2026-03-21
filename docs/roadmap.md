@@ -10,9 +10,9 @@ This roadmap tracks the V2 refactor effort. It was produced from a comprehensive
 
 | Task | Description | Status |
 |------|-------------|--------|
-| 1.1 | Extract shared `<ArticleListItem>` component from 3 duplicate implementations | Planned |
-| 1.2 | Extract shared `<NewsListView>` component — popular and latest views become ~10-line wrappers | Planned |
-| 1.3 | Move duplicated constants (`MAX_TAGS`, `SUMMARY_PLACEHOLDER`, `UNTITLED_ARTICLE`) to `src/constants.ts` | Planned |
+| 1.1 | Extract shared `<ArticleListItem>` component from 3 duplicate implementations | Done |
+| 1.2 | Extract shared `<NewsListView>` component — popular and latest views become ~14-line wrappers | Done |
+| 1.3 | Move duplicated constants (`MAX_TAGS`, `SUMMARY_PLACEHOLDER`, `UNTITLED_ARTICLE`) to `src/constants.ts` | Done |
 
 **Why first**: This is the single biggest quality win. Three files share ~70 lines of identical rendering logic, and two of them are 98% identical overall.
 
