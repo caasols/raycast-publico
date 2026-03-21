@@ -1,5 +1,5 @@
 import { List, Icon } from "@raycast/api";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   searchArticles,
   fetchArticleDetail,
@@ -49,6 +49,19 @@ export default function Command() {
       },
     },
   );
+
+  const handleRefresh = useCallback(() => {
+    void revalidate();
+  }, [revalidate]);
+
+  // Build a lookup from article ID to article for onSelectionChange
+  const articleById = useMemo(() => {
+    const map = new Map<string, Article>();
+    for (const article of articles) {
+      map.set(String(article.id), article);
+    }
+    return map;
+  }, [articles]);
 
   // Debounce article detail loading to reduce API calls when scrolling quickly
   useEffect(() => {
@@ -166,21 +179,15 @@ export default function Command() {
           return;
         }
 
-        const [, indexAsString] = id.split("-");
-        const index = Number.parseInt(indexAsString, 10);
-        const selectedArticle = Number.isNaN(index)
-          ? undefined
-          : articles[index];
-
+        const selectedArticle = articleById.get(id);
         if (selectedArticle) {
-          // Set pending article to trigger debounced loading
           setPendingArticle(selectedArticle);
         }
       }}
     >
       {emptyView
         ? emptyView
-        : articles.map((article, index) => {
+        : articles.map((article) => {
             const articleUrl = getArticleUrl(article);
             const articleId = extractArticleId(articleUrl);
             const enrichedData = articleId
@@ -191,14 +198,11 @@ export default function Command() {
 
             return (
               <ArticleListItem
-                key={`article-${index}`}
+                key={article.id}
                 article={article}
-                index={index}
                 enrichedArticle={enrichedData}
                 isLoadingDetail={isSelected}
-                onRefresh={() => {
-                  void revalidate();
-                }}
+                onRefresh={handleRefresh}
               />
             );
           })}

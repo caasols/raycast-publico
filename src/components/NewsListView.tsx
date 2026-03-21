@@ -1,4 +1,5 @@
 import { List, Icon } from "@raycast/api";
+import { useCallback } from "react";
 import { showFailureToast, useCachedPromise } from "@raycast/utils";
 import { Article } from "../api/type";
 import { ArticleListItem } from "./ArticleListItem";
@@ -25,6 +26,10 @@ export function NewsListView({
       void showFailureToast({ title: errorToastTitle, message });
     },
   });
+
+  const handleRefresh = useCallback(() => {
+    void revalidate();
+  }, [revalidate]);
 
   const articles = data ?? [];
   const errorMessage = error
@@ -71,14 +76,11 @@ export function NewsListView({
       isShowingDetail
       searchBarPlaceholder={searchBarPlaceholder}
     >
-      {articles.map((article, index) => (
+      {articles.map((article) => (
         <ArticleListItem
-          key={`article-${index}`}
+          key={article.id}
           article={article}
-          index={index}
-          onRefresh={() => {
-            void revalidate();
-          }}
+          onRefresh={handleRefresh}
         />
       ))}
     </List>
