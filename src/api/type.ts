@@ -9,6 +9,12 @@ export type TagLike =
       toString?: () => string;
     };
 
+export type AuthorLike =
+  | string
+  | { nome?: string; name?: string; [key: string]: unknown }
+  | undefined
+  | null;
+
 export interface Article {
   id: number;
   titulo: string;
