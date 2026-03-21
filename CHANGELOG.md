@@ -1,6 +1,6 @@
 # Raycast Publico Changelog
 
-## [1.0.0] - Initial Version - {PR_MERGE_DATE}
+## [1.0.0] - Initial Version
 
 ### Added
 - Initial release of the Raycast Público extension.

@@ -22,7 +22,7 @@ export function formatDate(dateStr: string): string {
       minute: "2-digit",
     };
 
-    return date.toLocaleDateString("pt-PT", options).replace(",", ",");
+    return date.toLocaleDateString("pt-PT", options);
   } catch (error) {
     console.error("Error formatting date:", error);
     return dateStr; // Return the original string if an error occurs

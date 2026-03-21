@@ -9,6 +9,7 @@ import {
   getArticleIcon,
   getArticleUrl,
   getTagColor,
+  stripHtml,
   DEFAULT_METADATA_PLACEHOLDER,
   resolvePublishedDate,
 } from "../utils/article";
@@ -29,7 +30,7 @@ function ArticleListItemComponent({
   onRefresh,
 }: ArticleListItemProps) {
   const cleanTitle =
-    article.titulo?.replace(/<[^>]*>/g, "") || UNTITLED_ARTICLE;
+    (article.titulo ? stripHtml(article.titulo) : "") || UNTITLED_ARTICLE;
   const articleUrl = getArticleUrl(article);
   const articleId = extractArticleId(articleUrl);
   const itemId = String(article.id);
