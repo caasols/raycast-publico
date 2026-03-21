@@ -88,11 +88,9 @@ This roadmap tracks the V2 refactor effort. It was produced from a comprehensive
 
 | Task | Description | Status |
 |------|-------------|--------|
-| 8.1 | Audit existing `ActionPanel` in `ArticleListItem` and `ArticleView` — ensure consistent action ordering across all views | Planned |
-| 8.2 | Add "Summarize" action (⌘⇧S) to `ArticleListItem` — calls Raycast AI (wired in Phase 11, stub for now) | Planned |
-| 8.3 | Add "View Summary" action to `ArticleListItem` — visible only when a saved summary exists for the article | Planned |
-| 8.4 | Add "Save Summary" action to `ArticleView` — persists the current summary to LocalStorage (wired in Phase 12, stub for now) | Planned |
-| 8.5 | Register any new commands or preferences needed in `package.json` (e.g., AI model preference if applicable) | Planned |
+| 8.1 | Audit existing `ActionPanel` in `ArticleListItem` and `ArticleView` — ensure consistent action ordering across all views | Done |
+| 8.2 | Add "Summarize" action (⌘⇧S) to `ArticleListItem` — stub, wired in Phase 11 | Done |
+| 8.3 | Add "View Summary" action to `ArticleListItem` — visible only when a saved summary exists, wired in Phase 12 | Done |
 
 **Why this order**: Actions need to be in place as stubs before the AI and storage phases wire them up. This keeps each phase focused.
 
@@ -281,7 +279,7 @@ This roadmap tracks the V2 refactor effort. It was produced from a comprehensive
 |--------|------|-------|
 | Modify | `src/components/ArticleListItem.tsx` — add Summarize, View Summary, Save Summary, export/share actions | 8, 13, 16 |
 | Modify | `src/components/ArticleView.tsx` — add Save Summary action, improve rendering | 8, 10 |
-| Modify | `package.json` — register new preferences (baseUrl, AI-related, login credentials) and commands (Recently Read, section commands) | 8, 9, 10, 13, 14 |
+| Modify | `package.json` — register new preferences (baseUrl, login credentials) and commands (Recently Read, section commands) | 9, 10, 13, 14 |
 | Modify | `src/api/client.ts` — add browser headers, fallback logic, configurable base URL, auth flow, cache/wayback fallback | 9, 10, 15 |
 | Modify | `src/preferences.ts` — add `getBaseUrl()`, login credentials helpers | 9, 10 |
 | Create | `src/utils/summarize.ts` — Raycast AI summarization wrapper | 11 |
