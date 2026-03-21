@@ -32,10 +32,10 @@ This roadmap tracks the V2 refactor effort. It was produced from a comprehensive
 
 | Task | Description | Status |
 |------|-------------|--------|
-| 3.1 | Create single `fetchArticleList()` helper to replace 3 near-identical fetch functions | Planned |
-| 3.2 | Add `AbortSignal.timeout(10_000)` to all fetch calls | Planned |
-| 3.3 | Add lightweight runtime validation (check array, required fields) — no new deps | Planned |
-| 3.4 | Classify errors (network vs HTTP vs parse) for better user-facing messages | Planned |
+| 3.1 | Create single `fetchArticleList()` helper to replace 3 near-identical fetch functions | Done |
+| 3.2 | Add `AbortSignal.timeout(10_000)` to all fetch calls + `AbortSignal.any()` for detail | Done |
+| 3.3 | Add `isArticleLike()` runtime validation (checks `titulo` and `url` fields) | Done |
+| 3.4 | Add `classifyError()` — distinguishes network, timeout, HTTP, and parse errors | Done |
 
 ---
 
