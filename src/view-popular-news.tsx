@@ -7,8 +7,8 @@ export default function Command() {
       fetchFn={fetchTopNews}
       searchBarPlaceholder="Search trending headlines..."
       errorToastTitle="Unable to load top news"
-      emptyTitle="No trending articles"
-      emptyDescription="Check back soon for the most popular stories from Público."
+      emptyTitle="No trending articles right now"
+      emptyDescription="Check back soon — popular stories from Público will appear here."
     />
   );
 }

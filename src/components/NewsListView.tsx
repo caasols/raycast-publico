@@ -49,8 +49,8 @@ export function NewsListView({
       >
         <List.EmptyView
           icon={Icon.ExclamationMark}
-          title="Unable to load Público news"
-          description={`${errorMessage}\n\nPress ⌘R to retry.`}
+          title="Unable to load articles"
+          description={errorMessage}
           actions={
             <ActionPanel>
               <Action
