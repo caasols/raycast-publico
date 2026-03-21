@@ -147,6 +147,18 @@ This roadmap tracks the V2 refactor effort. It was produced from a comprehensive
 | 10.9 | Handle paywalled articles gracefully — detect truncated or missing body, show a clear message ("This article requires a Público subscription") with "Open in Browser" as the primary action | Planned |
 | 10.10 | Handle fetch failures — if the HTML fetch is blocked (403, timeout), fall back to showing the API description/lead with a note that full content is unavailable | Planned |
 
+### Step 4 — Authenticated access (optional, only if Step 1 shows paywall blocking useful content)
+
+| Task | Description | Status |
+|------|-------------|--------|
+| 10.11 | Investigate publico.pt login flow — inspect the login page/network requests to understand how auth works (session cookie, JWT, OAuth, etc.) | Planned |
+| 10.12 | Check if the API has authenticated endpoints — look for `/api/content/` or similar that accept an auth token/cookie and return full article body | Planned |
+| 10.13 | Add optional login preferences in `package.json` — email/password or API token fields (marked as `"type": "password"` for secure storage) | Planned |
+| 10.14 | Implement auth flow in `client.ts` — login once, store session token, attach to subsequent requests | Planned |
+| 10.15 | Test authenticated fetch — verify that a logged-in request returns full article content for premium articles | Planned |
+
+**Note**: This step is exploratory. We don't know yet if publico.pt exposes a usable login API or if auth tokens work with their content endpoints. The goal is to test feasibility, not commit to a full implementation. If it works, it unlocks full content for subscribers; if not, we fall back to the description/lead path.
+
 **Why testable chunks matter**: We don't know yet if publico.pt will serve full article HTML to non-browser clients or without auth. Each step gives us a clear signal before investing in the next. If this direction is a dead end, we still have the API description/lead to work with for summarization in Phase 11.
 
 ---
