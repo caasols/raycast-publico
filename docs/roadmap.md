@@ -192,6 +192,66 @@ This roadmap tracks the V2 refactor effort. It was produced from a comprehensive
 
 ---
 
+## Phase 13: Reading History
+
+**Depends on**: Phase 10 (reading articles), Phase 12 (LocalStorage infrastructure)
+
+| Task | Description | Status |
+|------|-------------|--------|
+| 13.1 | Extend `src/utils/storage.ts` with reading history helpers: `markAsRead(articleId, title, url)`, `getReadHistory()`, `isRead(articleId)`, `clearHistory()` | Planned |
+| 13.2 | Define a `ReadHistoryEntry` type: `{ articleId: number; title: string; url: string; readAt: string }` | Planned |
+| 13.3 | Auto-track when an article is opened — call `markAsRead()` when the user triggers "Read Article" (`Action.Push` to `ArticleView`) | Planned |
+| 13.4 | Add visual indicator to `ArticleListItem` — dim the title or show an accessory icon (e.g., checkmark) for already-read articles | Planned |
+| 13.5 | Add a "Recently Read" command — new command in `package.json` that lists reading history from LocalStorage, sorted by most recent | Planned |
+| 13.6 | Add "Clear Reading History" action to the Recently Read command | Planned |
+| 13.7 | Share LRU eviction logic with summary storage (Phase 12.7) — keep total LocalStorage usage under the 10 MB cap | Planned |
+
+---
+
+## Phase 14: Section Filtering & Section Commands (Exploratory)
+
+**Exploratory**: The API returns a `secao` field per article, and publico.pt likely has section-specific endpoints. This phase explores both filtering the existing list and adding dedicated section commands.
+
+| Task | Description | Status |
+|------|-------------|--------|
+| 14.1 | Investigate available sections — collect all unique `secao` values from the API responses, map them to human-readable names (Política, Desporto, Cultura, Economia, etc.) | Planned |
+| 14.2 | Check if section-specific API endpoints exist (e.g., `/api/list/destaque/politica`, `/api/list/ultimas/desporto`) — test with browser DevTools | Planned |
+| 14.3 | If section endpoints exist: add new commands for key sections (e.g., "Popular in Politics", "Latest in Sports") — register in `package.json` using `NewsListView` with a section-specific fetch function | Planned |
+| 14.4 | If section endpoints don't exist: add a dropdown filter to the existing list views — filter articles client-side by `secao` using Raycast's `List.Dropdown` | Planned |
+| 14.5 | Consider whether section commands should reuse `NewsListView` with a parameter or need a new component — prefer reuse | Planned |
+
+**Note**: Individual section commands (14.3) and client-side filtering (14.4) are not mutually exclusive — we may end up with both. The API investigation in 14.1–14.2 determines which approach is primary.
+
+---
+
+## Phase 15: Google Cache / Wayback Machine Fallback (Exploratory)
+
+**Exploratory**: If Phase 10 shows that direct article fetch is blocked by paywall or WAF, we can try fetching the article content from Google Cache or the Wayback Machine as an alternative source.
+
+| Task | Description | Status |
+|------|-------------|--------|
+| 15.1 | Test Google Cache — fetch `https://webcache.googleusercontent.com/search?q=cache:{article_url}` with browser-like headers, check if full article content is returned | Planned |
+| 15.2 | Test Wayback Machine — query `https://web.archive.org/web/{article_url}` to check if recent snapshots exist and contain full content | Planned |
+| 15.3 | Compare content quality — if either source works, verify the returned HTML contains the full article body (not just a snippet or paywall wall) | Planned |
+| 15.4 | If viable: add as a fallback in `fetchArticleContent()` — try direct fetch first, then Google Cache, then Wayback Machine | Planned |
+| 15.5 | Add a "Read via Cache" action as an alternative in `ArticleListItem` — lets the user explicitly choose the cached version | Planned |
+
+**Note**: Google Cache may be discontinued or rate-limited. Wayback Machine may not have recent articles. This is a best-effort fallback, not a guaranteed solution.
+
+---
+
+## Phase 16: Export & Share
+
+| Task | Description | Status |
+|------|-------------|--------|
+| 16.1 | Add "Copy as Markdown" action — copies the article title, URL, and summary (if available) as a formatted markdown snippet | Planned |
+| 16.2 | Add "Share via Email" action — opens the default mail client with a pre-filled subject (article title) and body (URL + summary) using `open mailto:` | Planned |
+| 16.3 | Add "Send to Obsidian" action — copies a markdown note to clipboard in Obsidian-compatible format (title as H1, metadata as frontmatter, summary as body), or opens an Obsidian URI if the app is installed | Planned |
+| 16.4 | Add "Send to Notion" action — uses Raycast's `open` to create a new Notion page via URL scheme, or copies as a Notion-pasteable format | Planned |
+| 16.5 | Group export/share actions in a submenu within the `ActionPanel` — keep the primary action list clean | Planned |
+
+---
+
 ## File Change Summary
 
 ### Phases 1–7 (Done)
@@ -215,15 +275,17 @@ This roadmap tracks the V2 refactor effort. It was produced from a comprehensive
 | Fix | `CHANGELOG.md` |
 | Modify | `package.json` |
 
-### Phases 8–12 (Planned)
+### Phases 8–16 (Planned)
 
 | Action | File | Phase |
 |--------|------|-------|
-| Modify | `src/components/ArticleListItem.tsx` — add Summarize, View Summary, Save Summary actions | 8 |
+| Modify | `src/components/ArticleListItem.tsx` — add Summarize, View Summary, Save Summary, export/share actions | 8, 13, 16 |
 | Modify | `src/components/ArticleView.tsx` — add Save Summary action, improve rendering | 8, 10 |
-| Modify | `package.json` — register new preferences (baseUrl, AI-related) | 8, 9 |
-| Modify | `src/api/client.ts` — add browser headers, fallback logic, configurable base URL | 9 |
-| Modify | `src/preferences.ts` — add `getBaseUrl()` helper | 9 |
+| Modify | `package.json` — register new preferences (baseUrl, AI-related, login credentials) and commands (Recently Read, section commands) | 8, 9, 10, 13, 14 |
+| Modify | `src/api/client.ts` — add browser headers, fallback logic, configurable base URL, auth flow, cache/wayback fallback | 9, 10, 15 |
+| Modify | `src/preferences.ts` — add `getBaseUrl()`, login credentials helpers | 9, 10 |
 | Create | `src/utils/summarize.ts` — Raycast AI summarization wrapper | 11 |
-| Create | `src/utils/storage.ts` — LocalStorage helpers for persisted summaries | 12 |
-| Create | `src/api/type.ts` — add `StoredSummary` type | 12 |
+| Create | `src/utils/storage.ts` — LocalStorage helpers for summaries, reading history | 12, 13 |
+| Modify | `src/api/type.ts` — add `StoredSummary`, `ReadHistoryEntry` types | 12, 13 |
+| Create | `src/view-recently-read.tsx` — Recently Read command | 13 |
+| Create | `src/view-section-*.tsx` — Section-specific commands (if section endpoints exist) | 14 |
