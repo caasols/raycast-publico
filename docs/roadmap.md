@@ -22,9 +22,9 @@ This roadmap tracks the V2 refactor effort. It was produced from a comprehensive
 
 | Task | Description | Status |
 |------|-------------|--------|
-| 2.1 | Integrate or delete unused `article-view.tsx` (recommendation: integrate as push action) | Planned |
-| 2.2 | Remove duplicated `TagObject` type — reuse `TagLike` from `type.ts` | Planned |
-| 2.3 | Move `AuthorLike` type to `type.ts` and export it | Planned |
+| 2.1 | Integrate `article-view.tsx` as `Action.Push` "Read Article" in `ArticleListItem` | Done |
+| 2.2 | Remove duplicated `TagObject` type — use `Exclude<TagLike, string>` | Done |
+| 2.3 | Move `AuthorLike` type to `type.ts`, remove 5 unnecessary `as` casts | Done |
 
 ---
 
