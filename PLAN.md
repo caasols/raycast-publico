@@ -135,7 +135,12 @@
 - Test error classification logic from Phase 3.4.
 - Mock `fetch` to verify timeout, error handling, and abort behavior.
 
-### 7.4 — Add test script to package.json
+### 7.4 — Ensure lint compliance
+- The project uses `ray lint` which runs **ESLint v9** (via `@raycast/eslint-config` flat config) and **Prettier** together.
+- **Action**: Run `ray lint` after all refactoring and fix any issues. Ensure new files (components, constants, tests) follow the existing config.
+- No new ESLint config changes needed — the Raycast preset handles everything.
+
+### 7.5 — Add test script to package.json
 - Add `"test": "vitest run"` and `"test:watch": "vitest"` scripts.
 
 ---
