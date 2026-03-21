@@ -86,6 +86,11 @@ export function ArticleView({ articleUrl, articleTitle }: ArticleViewProps) {
             content={articleUrl}
             shortcut={{ modifiers: ["cmd"], key: "c" }}
           />
+          <Action.CopyToClipboard
+            title="Copy Title"
+            content={articleTitle}
+            shortcut={{ modifiers: ["cmd", "shift"], key: "c" }}
+          />
         </ActionPanel>
       }
     />
