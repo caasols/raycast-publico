@@ -88,7 +88,13 @@ This roadmap tracks the V2 refactor effort. It was produced from a comprehensive
 
 | Task | Description | Status |
 |------|-------------|--------|
-| 8.1 | Configure panel actions in the extension command config | Planned |
+| 8.1 | Audit existing `ActionPanel` in `ArticleListItem` and `ArticleView` — ensure consistent action ordering across all views | Planned |
+| 8.2 | Add "Summarize" action (⌘⇧S) to `ArticleListItem` — calls Raycast AI (wired in Phase 11, stub for now) | Planned |
+| 8.3 | Add "View Summary" action to `ArticleListItem` — visible only when a saved summary exists for the article | Planned |
+| 8.4 | Add "Save Summary" action to `ArticleView` — persists the current summary to LocalStorage (wired in Phase 12, stub for now) | Planned |
+| 8.5 | Register any new commands or preferences needed in `package.json` (e.g., AI model preference if applicable) | Planned |
+
+**Why this order**: Actions need to be in place as stubs before the AI and storage phases wire them up. This keeps each phase focused.
 
 ---
 
@@ -96,10 +102,15 @@ This roadmap tracks the V2 refactor effort. It was produced from a comprehensive
 
 | Task | Description | Status |
 |------|-------------|--------|
-| 9.1 | Add browser-like request headers (`User-Agent`, `Referer`) to API calls | Planned |
-| 9.2 | Add endpoint fallback logic for search | Planned |
-| 9.3 | Add configurable base URL via Raycast preferences | Planned |
-| 9.4 | Local testing required — verify working endpoint via browser DevTools | Planned |
+| 9.1 | Investigate publico.pt WAF blocking — open browser DevTools, identify which headers the site requires (likely `User-Agent`, `Accept`, `Referer`) | Planned |
+| 9.2 | Add browser-like request headers to `fetchJSON()` in `client.ts` — apply to all API calls, not just search | Planned |
+| 9.3 | Test whether the existing search endpoint (`/api/list/search?query=`) still works with proper headers, or if a new endpoint is needed | Planned |
+| 9.4 | Add endpoint fallback logic: if primary search returns 403/empty, try alternative endpoint (e.g., `/api/search/`, site-specific Google fallback) | Planned |
+| 9.5 | Add a `baseUrl` text preference in `package.json` — defaults to `https://www.publico.pt`, allows overriding for testing or API changes | Planned |
+| 9.6 | Replace hardcoded URL strings in `client.ts` with the configurable base URL from preferences | Planned |
+| 9.7 | Manual end-to-end verification: run `ray develop`, test search with multiple queries, confirm results render correctly | Planned |
+
+**Blocker note**: This phase requires local manual testing. The publico.pt Cloudflare WAF actively blocks non-browser requests with 403. The fix may be as simple as headers, or may require discovering an entirely new endpoint.
 
 ---
 
@@ -107,7 +118,13 @@ This roadmap tracks the V2 refactor effort. It was produced from a comprehensive
 
 | Task | Description | Status |
 |------|-------------|--------|
-| 10.1 | Verify full article content can be fetched and rendered | Planned |
+| 10.1 | Verify `fetchArticleDetail()` returns full article body (`body` or `texto` fields) — check against multiple articles | Planned |
+| 10.2 | Improve `ArticleView` markdown rendering — handle images (`imagem`, `multimediaPrincipal`), blockquotes, and embedded media gracefully | Planned |
+| 10.3 | Add loading state to `ArticleView` — show `isLoading` while fetching full content, with a meaningful placeholder | Planned |
+| 10.4 | Handle paywalled / premium articles — detect when body is truncated or missing, show a clear message with "Open in Browser" as primary action | Planned |
+| 10.5 | Test article reading across different article types (opinion, news, multimedia, live blog) to ensure consistent rendering | Planned |
+
+**Why this matters**: The reading view is the core value proposition. If articles don't render well, summarization (Phase 11) will produce poor results since it depends on the same content.
 
 ---
 
@@ -115,7 +132,14 @@ This roadmap tracks the V2 refactor effort. It was produced from a comprehensive
 
 | Task | Description | Status |
 |------|-------------|--------|
-| 11.1 | Add article summarization functionality | Planned |
+| 11.1 | Import `AI` from `@raycast/api` and create a `summarizeArticle(article: Article)` utility in `src/utils/summarize.ts` | Planned |
+| 11.2 | Design the AI prompt — instruct the model to summarize the article in 2–3 sentences in the article's original language (Portuguese), focusing on key facts | Planned |
+| 11.3 | Wire the "Summarize" action (from Phase 8.2) to call `summarizeArticle()` — show a `Toast` with loading/success/error states | Planned |
+| 11.4 | Display the summary in a `Detail` view pushed onto the navigation stack, with the original title as heading and summary as body | Planned |
+| 11.5 | Handle edge cases: missing article body (prompt user to open in browser first), AI API errors, empty responses | Planned |
+| 11.6 | Add the `"type": "no-view"` or appropriate command mode for AI usage — verify Raycast Pro is required and document this in README | Planned |
+
+**Tech notes**: Uses `AI.ask()` from `@raycast/api`. Requires Raycast Pro subscription. The prompt should receive the article title + lead + body (truncated if needed to stay within token limits). Summary language should match the article language (Portuguese).
 
 ---
 
@@ -123,11 +147,19 @@ This roadmap tracks the V2 refactor effort. It was produced from a comprehensive
 
 | Task | Description | Status |
 |------|-------------|--------|
-| 12.1 | Save summaries as they are created so they persist across sessions | Planned |
+| 12.1 | Create `src/utils/storage.ts` — wrapper around `LocalStorage` with typed helpers: `saveSummary(articleId, summary)`, `getSummary(articleId)`, `getAllSummaries()`, `deleteSummary(articleId)` | Planned |
+| 12.2 | Define a `StoredSummary` type: `{ articleId: number; title: string; summary: string; createdAt: string; url: string }` | Planned |
+| 12.3 | Auto-save after summarization — when `summarizeArticle()` succeeds (Phase 11.3), immediately persist the result via `saveSummary()` | Planned |
+| 12.4 | Wire the "View Summary" action (from Phase 8.3) — check `LocalStorage` for existing summary, show it in a `Detail` view if found | Planned |
+| 12.5 | Add a visual indicator to `ArticleListItem` — show an accessory icon/tag when a saved summary exists for that article | Planned |
+| 12.6 | Add a "Delete Summary" action (⌘⌫) to the summary detail view — removes from LocalStorage and updates the list | Planned |
+| 12.7 | Handle storage limits — `LocalStorage` has a 10 MB cap; implement a simple LRU eviction if total size exceeds a threshold (e.g., 8 MB) | Planned |
 
 ---
 
 ## File Change Summary
+
+### Phases 1–7 (Done)
 
 | Action | File |
 |--------|------|
@@ -147,3 +179,16 @@ This roadmap tracks the V2 refactor effort. It was produced from a comprehensive
 | Fix | `src/utils/formatDate.ts` |
 | Fix | `CHANGELOG.md` |
 | Modify | `package.json` |
+
+### Phases 8–12 (Planned)
+
+| Action | File | Phase |
+|--------|------|-------|
+| Modify | `src/components/ArticleListItem.tsx` — add Summarize, View Summary, Save Summary actions | 8 |
+| Modify | `src/components/ArticleView.tsx` — add Save Summary action, improve rendering | 8, 10 |
+| Modify | `package.json` — register new preferences (baseUrl, AI-related) | 8, 9 |
+| Modify | `src/api/client.ts` — add browser headers, fallback logic, configurable base URL | 9 |
+| Modify | `src/preferences.ts` — add `getBaseUrl()` helper | 9 |
+| Create | `src/utils/summarize.ts` — Raycast AI summarization wrapper | 11 |
+| Create | `src/utils/storage.ts` — LocalStorage helpers for persisted summaries | 12 |
+| Create | `src/api/type.ts` — add `StoredSummary` type | 12 |
