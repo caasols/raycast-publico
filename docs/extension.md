@@ -2,7 +2,7 @@
 
 ## Overview
 
-Raycast Público is a [Raycast](https://www.raycast.com/) extension that brings Portuguese news from [Público](https://www.publico.pt/) directly into the command bar. It lets users browse trending headlines, view the latest articles, and search the archive — all without opening a browser.
+Raycast Público is a [Raycast](https://www.raycast.com/) extension that lets you browse, search, and read the latest news from [Público](https://www.publico.pt/) directly from your command bar.
 
 The extension is built with React, TypeScript, and the Raycast API. It consumes Público's undocumented JSON API and renders articles in Raycast's native list and detail views.
 
@@ -14,9 +14,9 @@ The extension provides three commands, each registered in `package.json` under t
 
 | Command | File | Endpoint | Description |
 |---------|------|----------|-------------|
-| **View Popular News** | `src/view-popular-news.tsx` | `GET /api/list/destaque` | Shows trending/most-read articles |
-| **View Latest News** | `src/view-latest-news.tsx` | `GET /api/list/ultimas` | Shows the most recent headlines |
-| **Search News** | `src/search-news.tsx` | `GET /api/list/search?query=` | Full-text search with article detail enrichment |
+| **View Popular News** | `src/view-popular-news.tsx` | `GET /api/list/destaque` | Browse the most popular stories from Público |
+| **View Latest News** | `src/view-latest-news.tsx` | `GET /api/list/ultimas` | Browse the latest headlines from Público |
+| **Search News** | `src/search-news.tsx` | `GET /api/list/search?query=` | Search for articles on Público |
 
 All three commands render articles in a `<List>` with `isShowingDetail` enabled, showing a preview panel alongside the article list.
 
@@ -28,14 +28,19 @@ All three commands render articles in a `<List>` with `isShowingDetail` enabled,
 src/
 ├── api/
 │   ├── client.ts          # HTTP client — all API calls to publico.pt
-│   └── type.ts            # TypeScript interfaces (Article, TagLike)
+│   └── type.ts            # TypeScript interfaces (Article, TagLike, AuthorLike)
+├── components/
+│   ├── ArticleListItem.tsx # Memoized list item with actions and detail panel
+│   ├── ArticleView.tsx     # Full article reading view (Detail component)
+│   └── NewsListView.tsx    # Reusable list wrapper with cached data fetching
 ├── utils/
 │   ├── article.ts         # Article data transformation and formatting
 │   └── formatDate.ts      # Date parsing and locale formatting
+├── constants.ts           # Shared constants (MAX_TAGS, placeholders, debounce)
+├── preferences.ts         # User preferences helper (maxArticles)
 ├── view-popular-news.tsx  # Command: trending articles
 ├── view-latest-news.tsx   # Command: latest articles
-├── search-news.tsx        # Command: search with detail enrichment
-└── article-view.tsx       # Standalone Detail view (currently unused)
+└── search-news.tsx        # Command: search with detail enrichment
 ```
 
 ### Layer Responsibilities
@@ -171,9 +176,9 @@ The search list shows many articles at once. When users scroll through the list,
 
 Raycast extensions run in a Node.js-like environment with native `fetch` support. Adding an HTTP library would increase bundle size for no benefit. The V2 refactor adds timeout via `AbortSignal.timeout()` and better error handling, which are the only features native `fetch` lacks compared to libraries.
 
-### Why `article-view.tsx` was unused in V1?
+### Why was `article-view.tsx` unused in V1?
 
-The file implements a full article reading view using Raycast's `<Detail>` component. It was built as part of the initial development but was never wired into the navigation. The V2 plan integrates it as an `Action.Push` target, letting users read article content directly in Raycast before deciding whether to open the browser.
+V1 included a standalone article reading view using Raycast's `<Detail>` component, but it was never wired into the navigation. The V2 refactor integrated it as `ArticleView` in `src/components/`, accessible via `Action.Push` from any article list item. Users can now read article content directly in Raycast before deciding whether to open the browser.
 
 ### Why vitest over Jest for V2?
 
