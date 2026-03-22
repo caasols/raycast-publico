@@ -146,6 +146,56 @@ export async function searchArticlesContent(
 
 // --- HTML-based search (the JSON APIs don't actually filter by query) ---
 
+const FETCH_HEADERS = {
+  "User-Agent":
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+  Accept: "text/html",
+};
+
+function parseArticlesFromHtml(html: string): Article[] {
+  const $ = cheerio.load(html);
+  const articles: Article[] = [];
+
+  $(".headline-list__item").each((index, element) => {
+    const $item = $(element);
+    const title = $item.find(".headline").first().text().trim();
+    const href = $item.find("a").first().attr("href") || "";
+    const kicker = $item.find(".kicker").first().text().trim();
+    const date = $item.find(".dateline").first().text().trim();
+    const lead = $item.find(".lead").first().text().trim();
+    const imgSrc = $item.find("img").first().attr("src") || "";
+    const authors = $item
+      .find(".byline__name")
+      .map((_i, el) => $(el).text().trim())
+      .get();
+
+    if (!title || !href) {
+      return;
+    }
+
+    const fullUrl = href.startsWith("http")
+      ? href
+      : `https://www.publico.pt${href}`;
+
+    articles.push({
+      id: index,
+      titulo: title,
+      url: fullUrl,
+      fullUrl,
+      descricao: lead || undefined,
+      lead: lead || undefined,
+      secao: kicker || undefined,
+      data: date || undefined,
+      imagem: imgSrc ? { src: imgSrc } : undefined,
+      autores: authors.length
+        ? authors.map((name) => ({ nome: name }))
+        : undefined,
+    });
+  });
+
+  return articles;
+}
+
 export async function searchArticlesHtml(
   query: string,
 ): Promise<Article[]> {
@@ -157,65 +207,45 @@ export async function searchArticlesHtml(
 
   try {
     const encodedQuery = encodeURIComponent(query);
-    const url = `https://www.publico.pt/pesquisa?query=${encodedQuery}`;
 
-    const response = await fetch(url, {
+    // First fetch the search page to get the token for all-time search
+    const initialUrl = `https://www.publico.pt/pesquisa?query=${encodedQuery}`;
+    const initialResponse = await fetch(initialUrl, {
       signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
-        Accept: "text/html",
-      },
+      headers: FETCH_HEADERS,
     });
 
-    if (!response.ok) {
+    if (!initialResponse.ok) {
       throw new Error(
-        `${context}: HTTP ${response.status} ${response.statusText}`,
+        `${context}: HTTP ${initialResponse.status} ${initialResponse.statusText}`,
       );
     }
 
-    const html = await response.text();
-    const $ = cheerio.load(html);
-    const articles: Article[] = [];
+    const initialHtml = await initialResponse.text();
+    const $ = cheerio.load(initialHtml);
 
-    $(".headline-list__item").each((index, element) => {
-      const $item = $(element);
-      const title = $item.find(".headline").first().text().trim();
-      const href = $item.find("a").first().attr("href") || "";
-      const kicker = $item.find(".kicker").first().text().trim();
-      const date = $item.find(".dateline").first().text().trim();
-      const lead = $item.find(".lead").first().text().trim();
-      const imgSrc = $item.find("img").first().attr("src") || "";
-      const authors = $item
-        .find(".byline__name")
-        .map((_i, el) => $(el).text().trim())
-        .get();
+    // Extract the token from the "Mais artigos" link which contains interval=L5
+    const maisArtigosHref =
+      $('a[href*="interval"]').attr("href") || "";
+    const tokenMatch = maisArtigosHref.match(/token=([^&]+)/);
+    const token = tokenMatch ? tokenMatch[1] : "";
 
-      if (!title || !href) {
-        return;
-      }
-
-      const fullUrl = href.startsWith("http")
-        ? href
-        : `https://www.publico.pt${href}`;
-
-      articles.push({
-        id: index,
-        titulo: title,
-        url: fullUrl,
-        fullUrl,
-        descricao: lead || undefined,
-        lead: lead || undefined,
-        secao: kicker || undefined,
-        data: date || undefined,
-        imagem: imgSrc ? { src: imgSrc } : undefined,
-        autores: authors.length
-          ? authors.map((name) => ({ nome: name }))
-          : undefined,
+    // If we found a token, re-fetch with all-time interval
+    if (token) {
+      const allTimeUrl = `https://www.publico.pt/search2/?query=${encodedQuery}&interval=L5&token=${encodeURIComponent(token)}`;
+      const allTimeResponse = await fetch(allTimeUrl, {
+        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+        headers: FETCH_HEADERS,
       });
-    });
 
-    return articles;
+      if (allTimeResponse.ok) {
+        const allTimeHtml = await allTimeResponse.text();
+        return parseArticlesFromHtml(allTimeHtml);
+      }
+    }
+
+    // Fallback: use results from initial page
+    return parseArticlesFromHtml(initialHtml);
   } catch (error) {
     throw classifyError(error, context);
   }
