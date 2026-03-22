@@ -207,45 +207,21 @@ export async function searchArticlesHtml(
 
   try {
     const encodedQuery = encodeURIComponent(query);
+    const url = `https://www.publico.pt/pesquisa?query=${encodedQuery}`;
 
-    // First fetch the search page to get the token for all-time search
-    const initialUrl = `https://www.publico.pt/pesquisa?query=${encodedQuery}`;
-    const initialResponse = await fetch(initialUrl, {
+    const response = await fetch(url, {
       signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
       headers: FETCH_HEADERS,
     });
 
-    if (!initialResponse.ok) {
+    if (!response.ok) {
       throw new Error(
-        `${context}: HTTP ${initialResponse.status} ${initialResponse.statusText}`,
+        `${context}: HTTP ${response.status} ${response.statusText}`,
       );
     }
 
-    const initialHtml = await initialResponse.text();
-    const $ = cheerio.load(initialHtml);
-
-    // Extract the token from the "Mais artigos" link which contains interval=L5
-    const maisArtigosHref =
-      $('a[href*="interval"]').attr("href") || "";
-    const tokenMatch = maisArtigosHref.match(/token=([^&]+)/);
-    const token = tokenMatch ? tokenMatch[1] : "";
-
-    // If we found a token, re-fetch with all-time interval
-    if (token) {
-      const allTimeUrl = `https://www.publico.pt/search2/?query=${encodedQuery}&interval=L5&token=${encodeURIComponent(token)}`;
-      const allTimeResponse = await fetch(allTimeUrl, {
-        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-        headers: FETCH_HEADERS,
-      });
-
-      if (allTimeResponse.ok) {
-        const allTimeHtml = await allTimeResponse.text();
-        return parseArticlesFromHtml(allTimeHtml);
-      }
-    }
-
-    // Fallback: use results from initial page
-    return parseArticlesFromHtml(initialHtml);
+    const html = await response.text();
+    return parseArticlesFromHtml(html);
   } catch (error) {
     throw classifyError(error, context);
   }
