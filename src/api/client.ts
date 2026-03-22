@@ -185,6 +185,7 @@ export async function searchArticlesHtml(
       const kicker = $item.find(".kicker").first().text().trim();
       const date = $item.find(".dateline").first().text().trim();
       const lead = $item.find(".lead").first().text().trim();
+      const imgSrc = $item.find("img").first().attr("src") || "";
       const authors = $item
         .find(".byline__name")
         .map((_i, el) => $(el).text().trim())
@@ -207,6 +208,7 @@ export async function searchArticlesHtml(
         lead: lead || undefined,
         secao: kicker || undefined,
         data: date || undefined,
+        imagem: imgSrc ? { src: imgSrc } : undefined,
         autores: authors.length
           ? authors.map((name) => ({ nome: name }))
           : undefined,
