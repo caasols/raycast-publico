@@ -1,3 +1,4 @@
+import * as cheerio from "cheerio";
 import { Article } from "./type";
 
 const BASE_URL = "https://www.publico.pt/api";
@@ -138,6 +139,81 @@ export async function searchArticlesContent(
           : undefined,
         secao: (item.site as string) ?? undefined,
       })) as Article[];
+  } catch (error) {
+    throw classifyError(error, context);
+  }
+}
+
+// --- HTML-based search (the JSON APIs don't actually filter by query) ---
+
+export async function searchArticlesHtml(
+  query: string,
+): Promise<Article[]> {
+  const context = "Unable to search articles";
+
+  if (!query.trim()) {
+    return [];
+  }
+
+  try {
+    const encodedQuery = encodeURIComponent(query);
+    const url = `https://www.publico.pt/pesquisa?query=${encodedQuery}`;
+
+    const response = await fetch(url, {
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+        Accept: "text/html",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `${context}: HTTP ${response.status} ${response.statusText}`,
+      );
+    }
+
+    const html = await response.text();
+    const $ = cheerio.load(html);
+    const articles: Article[] = [];
+
+    $(".headline-list__item").each((index, element) => {
+      const $item = $(element);
+      const title = $item.find(".headline").first().text().trim();
+      const href = $item.find("a").first().attr("href") || "";
+      const kicker = $item.find(".kicker").first().text().trim();
+      const date = $item.find(".dateline").first().text().trim();
+      const lead = $item.find(".lead").first().text().trim();
+      const authors = $item
+        .find(".byline__name")
+        .map((_i, el) => $(el).text().trim())
+        .get();
+
+      if (!title || !href) {
+        return;
+      }
+
+      const fullUrl = href.startsWith("http")
+        ? href
+        : `https://www.publico.pt${href}`;
+
+      articles.push({
+        id: index,
+        titulo: title,
+        url: fullUrl,
+        fullUrl,
+        descricao: lead || undefined,
+        lead: lead || undefined,
+        secao: kicker || undefined,
+        data: date || undefined,
+        autores: authors.length
+          ? authors.map((name) => ({ nome: name }))
+          : undefined,
+      });
+    });
+
+    return articles;
   } catch (error) {
     throw classifyError(error, context);
   }

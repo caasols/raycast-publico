@@ -1,7 +1,7 @@
 import { List, Icon } from "@raycast/api";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  searchArticlesContent,
+  searchArticlesHtml,
   fetchArticleDetail,
   extractArticleId,
 } from "./api/client";
@@ -38,7 +38,7 @@ export default function Command() {
       if (!query.trim()) {
         return [];
       }
-      return await searchArticlesContent(query);
+      return await searchArticlesHtml(query);
     },
     [searchText],
     {
