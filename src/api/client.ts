@@ -90,9 +90,57 @@ export async function fetchTopNews(): Promise<Article[]> {
 export async function searchArticles(query: string): Promise<Article[]> {
   const encodedQuery = encodeURIComponent(query);
   return fetchArticleList(
-    `${BASE_URL}/list/search?query=${encodedQuery}`,
+    `${BASE_URL}/list/pesquisa?query=${encodedQuery}`,
     "Unable to search articles",
   );
+}
+
+export async function searchArticlesContent(
+  query: string,
+): Promise<Article[]> {
+  const encodedQuery = encodeURIComponent(query);
+  const context = "Unable to search articles (content)";
+
+  try {
+    const response = await fetch(
+      `${BASE_URL}/content/search?query=${encodedQuery}`,
+      { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) },
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `${context}: HTTP ${response.status} ${response.statusText}`,
+      );
+    }
+
+    const data = await response.json();
+
+    if (!Array.isArray(data)) {
+      return [];
+    }
+
+    // Map content/search format to our Article type
+    return data
+      .filter(
+        (item: Record<string, unknown>) =>
+          typeof item.title === "string" && typeof item.pos === "number",
+      )
+      .map((item: Record<string, unknown>) => ({
+        id: (item.id as number) ?? item.pos,
+        titulo: item.title as string,
+        url: (item.url as string) ?? "",
+        descricao: (item.description as string) ?? "",
+        autores: Array.isArray(item.author)
+          ? (item.author as Article["autores"])
+          : undefined,
+        imagem: item.image
+          ? { src: item.image as string }
+          : undefined,
+        secao: (item.site as string) ?? undefined,
+      })) as Article[];
+  } catch (error) {
+    throw classifyError(error, context);
+  }
 }
 
 // Extract article ID from URL

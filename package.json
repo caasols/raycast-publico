@@ -30,6 +30,13 @@
       "subtitle": "Público",
       "description": "Search for articles on Público",
       "mode": "view"
+    },
+    {
+      "name": "search-news-content",
+      "title": "Search News (Content API)",
+      "subtitle": "Público",
+      "description": "Search using the content API — for comparison testing",
+      "mode": "view"
     }
   ],
   "preferences": [
