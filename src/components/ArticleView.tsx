@@ -61,8 +61,8 @@ export function ArticleView({ articleUrl, articleTitle }: ArticleViewProps) {
       return `# ${articleTitle}\n\nLoading article...`;
     }
 
-    const title = article.titulo || articleTitle;
-    const lead = article.lead || "";
+    const title = stripHtml(article.titulo || articleTitle);
+    const lead = article.lead ? stripHtml(article.lead) : "";
     const body = article.body ?? "";
     const publishedDate = article.data
       ? formatDate(article.data)
