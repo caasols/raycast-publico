@@ -1,7 +1,7 @@
 import { List, Icon } from "@raycast/api";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  searchArticlesHtml,
+  searchArticlesByTag,
   fetchArticleDetail,
   extractArticleId,
 } from "./api/client";
@@ -40,7 +40,7 @@ export default function Command() {
       if (!query.trim()) {
         return [];
       }
-      return await searchArticlesHtml(query);
+      return await searchArticlesByTag(query);
     },
     [searchText],
     {
@@ -154,7 +154,7 @@ export default function Command() {
         <List.EmptyView
           icon={Icon.MagnifyingGlass}
           title="Search Público"
-          description="Type a keyword to find articles from Público."
+          description="Search by topic, person, place, or team — e.g. “Benfica”, “Trump”, “inteligência artificial”."
         />
       );
     }
@@ -164,7 +164,7 @@ export default function Command() {
         <List.EmptyView
           icon={Icon.XmarkCircle}
           title="No articles found"
-          description={`No results for "${searchText}". Try a different keyword.`}
+          description={`No Público topic matches "${searchText}". Try a single subject, name, or place.`}
         />
       );
     }
