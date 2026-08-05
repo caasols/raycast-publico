@@ -20,7 +20,7 @@ Command ids are unchanged, so existing aliases and hotkeys keep working.
 
 - Dropped the `cheerio` HTML-scraping dependency and the dead search code paths.
 
-## [Initial Version] - 2025-10-16
+## [Initial Version]
 
 ### Added
 

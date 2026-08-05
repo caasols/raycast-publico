@@ -116,6 +116,7 @@ export async function fetchSection(slug: string): Promise<Article[]> {
 // slugs return an empty array, which we use as the no-results signal.
 // See docs/endpoints.md for the full investigation.
 
+// prettier-ignore
 const PT_STOPWORDS = new Set([
   "a", "o", "as", "os", "um", "uma", "de", "da", "do", "das", "dos",
   "e", "em", "na", "no", "nas", "nos", "ao", "aos", "com", "para",

@@ -155,7 +155,9 @@ async function discoverSections() {
       paywalledRatio: list.length ? +(exclusive / list.length).toFixed(2) : 0,
       sampleId: list[0]?.id ?? null,
       sampleTitle: list[0]?.titulo
-        ? String(list[0].titulo).replace(/<[^>]+>/g, "").slice(0, 80)
+        ? String(list[0].titulo)
+            .replace(/<[^>]+>/g, "")
+            .slice(0, 80)
         : null,
       ms: r.ms,
     };
@@ -166,7 +168,9 @@ async function discoverSections() {
     );
     return row;
   });
-  return rows.sort((a, b) => Number(b.works) - Number(a.works) || a.slug.localeCompare(b.slug));
+  return rows.sort(
+    (a, b) => Number(b.works) - Number(a.works) || a.slug.localeCompare(b.slug),
+  );
 }
 
 async function documentKnown(sampleId) {
@@ -208,13 +212,15 @@ async function main() {
         "Unknown slugs return 0 items — a clean no-results signal. This is the " +
         "viable replacement for the WAF-blocked /pesquisa HTML search.",
     ],
-    workingSections: working.map(({ slug, endpoint, label, items, paywalledRatio }) => ({
-      slug,
-      endpoint,
-      label,
-      items,
-      paywalledRatio,
-    })),
+    workingSections: working.map(
+      ({ slug, endpoint, label, items, paywalledRatio }) => ({
+        slug,
+        endpoint,
+        label,
+        items,
+        paywalledRatio,
+      }),
+    ),
     allProbes: sections,
     knownEndpoints,
   };
@@ -262,7 +268,8 @@ function renderMarkdown(m) {
     "| Slug | HTTP | Works | Items |",
     "| --- | --- | --- | --- |",
     ...m.allProbes.map(
-      (s) => `| \`${s.slug}\` | ${s.status} | ${s.works ? "✓" : "✗"} | ${s.items} |`,
+      (s) =>
+        `| \`${s.slug}\` | ${s.status} | ${s.works ? "✓" : "✗"} | ${s.items} |`,
     ),
     "",
   ];

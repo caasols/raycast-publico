@@ -63,7 +63,10 @@ async function main() {
 
   // 1. Write a command component for each section.
   for (const section of sections) {
-    await writeFile(join(srcDir, `section-${section.slug}.tsx`), commandFile(section));
+    await writeFile(
+      join(srcDir, `section-${section.slug}.tsx`),
+      commandFile(section),
+    );
   }
 
   // 2. Remove stale section-*.tsx files no longer in the registry.
