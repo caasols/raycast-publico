@@ -3,6 +3,15 @@ import { Article } from "./type";
 const BASE_URL = "https://www.publico.pt/api";
 const REQUEST_TIMEOUT_MS = 10_000;
 
+// Público's WAF challenges non-browser HTML requests; sending a browser-like
+// User-Agent keeps the JSON API routes reliable if that policy ever tightens.
+const REQUEST_HEADERS = {
+  "User-Agent":
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 " +
+    "(KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+  Accept: "application/json",
+};
+
 // --- Response validation ---
 
 function isArticleLike(item: unknown): item is Article {
@@ -56,6 +65,7 @@ async function fetchArticleList(
   try {
     const response = await fetch(url, {
       signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+      headers: REQUEST_HEADERS,
     });
 
     if (!response.ok) {
@@ -87,12 +97,79 @@ export async function fetchTopNews(): Promise<Article[]> {
   );
 }
 
-export async function searchArticles(query: string): Promise<Article[]> {
-  const encodedQuery = encodeURIComponent(query);
+/**
+ * Fetch a section feed by slug (e.g. "politica", "desporto").
+ * Returns up to ~10 of the latest articles — the API caps every list here.
+ */
+export async function fetchSection(slug: string): Promise<Article[]> {
   return fetchArticleList(
-    `${BASE_URL}/list/search?query=${encodedQuery}`,
-    "Unable to search articles",
+    `${BASE_URL}/list/${encodeURIComponent(slug)}`,
+    `Unable to load ${slug}`,
   );
+}
+
+// --- Tag-based search ---
+//
+// Público's `/pesquisa` HTML search is WAF-blocked and the JSON search endpoint
+// ignores its query. But `/api/list/{slug}` accepts TAG slugs, not just
+// sections: slugify the query and it returns topic-filtered articles. Unknown
+// slugs return an empty array, which we use as the no-results signal.
+// See docs/endpoints.md for the full investigation.
+
+const PT_STOPWORDS = new Set([
+  "a", "o", "as", "os", "um", "uma", "de", "da", "do", "das", "dos",
+  "e", "em", "na", "no", "nas", "nos", "ao", "aos", "com", "para",
+  "por", "que", "se", "ou",
+]);
+
+/** Lowercase, strip accents, collapse non-alphanumerics into hyphens. */
+export function slugify(query: string): string {
+  return query
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/**
+ * Ordered slug candidates to try for a query, widening recall:
+ * 1. the full slugified query,
+ * 2. the query with Portuguese stopwords removed (e.g. "guerra na ucr\u00e2nia"
+ *    also tries "guerra-ucrania").
+ */
+export function slugCandidates(query: string): string[] {
+  const words = query
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean);
+
+  const significant = words.filter((word) => !PT_STOPWORDS.has(word));
+  const candidates = [words.join("-")];
+
+  if (significant.length && significant.length !== words.length) {
+    candidates.push(significant.join("-"));
+  }
+
+  return [...new Set(candidates)].filter(Boolean);
+}
+
+export async function searchArticlesByTag(query: string): Promise<Article[]> {
+  if (!query.trim()) {
+    return [];
+  }
+
+  const context = "Unable to search articles";
+  for (const slug of slugCandidates(query)) {
+    const results = await fetchArticleList(`${BASE_URL}/list/${slug}`, context);
+    if (results.length > 0) {
+      return results;
+    }
+  }
+
+  return [];
 }
 
 // Extract article ID from URL
@@ -162,7 +239,10 @@ export async function fetchArticleDetail(
       ? AbortSignal.any([signal, timeoutSignal])
       : timeoutSignal;
 
-    const response = await fetch(url, { signal: combinedSignal });
+    const response = await fetch(url, {
+      signal: combinedSignal,
+      headers: REQUEST_HEADERS,
+    });
 
     if (!response.ok) {
       throw new Error(

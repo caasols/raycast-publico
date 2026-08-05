@@ -2,6 +2,20 @@
 
 # dependencies
 /node_modules
+node_modules/
+
+# generated code graph (rebuild with `graphify update .`)
+graphify-out/
+
+# agent/internal docs: kept local, never published
+# (cartographer map + context layer, and the API investigation notes)
+CLAUDE.md
+context.md
+src/context.md
+docs/
+
+# agent tooling
+.claude/
 
 # Raycast specific files
 raycast-env.d.ts
@@ -11,4 +25,16 @@ compiled_raycast_swift
 
 # misc
 .DS_Store
+
+# scratch / debris
+/raycast-publico
+pesquisa-*.txt
+*.dump.html
+
+# stray tooling output (maintainer scripts, ad-hoc analysis)
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+*.egg-info/
 

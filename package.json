@@ -30,6 +30,369 @@
       "subtitle": "Público",
       "description": "Search for articles on Público",
       "mode": "view"
+    },
+    {
+      "name": "section-politica",
+      "title": "Política",
+      "subtitle": "Público",
+      "description": "Browse the latest Política stories from Público",
+      "mode": "view",
+      "keywords": [
+        "politics",
+        "governo",
+        "parlamento"
+      ]
+    },
+    {
+      "name": "section-mundo",
+      "title": "Mundo",
+      "subtitle": "Público",
+      "description": "Browse the latest Mundo stories from Público",
+      "mode": "view",
+      "keywords": [
+        "world",
+        "internacional"
+      ]
+    },
+    {
+      "name": "section-economia",
+      "title": "Economia",
+      "subtitle": "Público",
+      "description": "Browse the latest Economia stories from Público",
+      "mode": "view",
+      "keywords": [
+        "economy",
+        "finanças",
+        "negócios"
+      ]
+    },
+    {
+      "name": "section-sociedade",
+      "title": "Sociedade",
+      "subtitle": "Público",
+      "description": "Browse the latest Sociedade stories from Público",
+      "mode": "view",
+      "keywords": [
+        "society"
+      ]
+    },
+    {
+      "name": "section-ciencia",
+      "title": "Ciência",
+      "subtitle": "Público",
+      "description": "Browse the latest Ciência stories from Público",
+      "mode": "view",
+      "keywords": [
+        "science"
+      ]
+    },
+    {
+      "name": "section-tecnologia",
+      "title": "Tecnologia",
+      "subtitle": "Público",
+      "description": "Browse the latest Tecnologia stories from Público",
+      "mode": "view",
+      "keywords": [
+        "technology",
+        "tech"
+      ]
+    },
+    {
+      "name": "section-cultura",
+      "title": "Cultura",
+      "subtitle": "Público",
+      "description": "Browse the latest Cultura stories from Público",
+      "mode": "view",
+      "keywords": [
+        "culture"
+      ]
+    },
+    {
+      "name": "section-desporto",
+      "title": "Desporto",
+      "subtitle": "Público",
+      "description": "Browse the latest Desporto stories from Público",
+      "mode": "view",
+      "keywords": [
+        "sports",
+        "futebol"
+      ]
+    },
+    {
+      "name": "section-opiniao",
+      "title": "Opinião",
+      "subtitle": "Público",
+      "description": "Browse the latest Opinião stories from Público",
+      "mode": "view",
+      "keywords": [
+        "opinion",
+        "editorial"
+      ]
+    },
+    {
+      "name": "section-local",
+      "title": "Local",
+      "subtitle": "Público",
+      "description": "Browse the latest Local stories from Público",
+      "mode": "view",
+      "keywords": [
+        "regional"
+      ]
+    },
+    {
+      "name": "section-lisboa",
+      "title": "Lisboa",
+      "subtitle": "Público",
+      "description": "Browse the latest Lisboa stories from Público",
+      "mode": "view",
+      "keywords": [
+        "local"
+      ]
+    },
+    {
+      "name": "section-porto",
+      "title": "Porto",
+      "subtitle": "Público",
+      "description": "Browse the latest Porto stories from Público",
+      "mode": "view",
+      "keywords": [
+        "local"
+      ]
+    },
+    {
+      "name": "section-europa",
+      "title": "Europa",
+      "subtitle": "Público",
+      "description": "Browse the latest Europa stories from Público",
+      "mode": "view",
+      "keywords": [
+        "europe",
+        "ue"
+      ]
+    },
+    {
+      "name": "section-brasil",
+      "title": "Brasil",
+      "subtitle": "Público",
+      "description": "Browse the latest Brasil stories from Público",
+      "mode": "view",
+      "keywords": [
+        "brazil"
+      ]
+    },
+    {
+      "name": "section-media",
+      "title": "Media",
+      "subtitle": "Público",
+      "description": "Browse the latest Media stories from Público",
+      "mode": "view",
+      "keywords": [
+        "comunicação social"
+      ]
+    },
+    {
+      "name": "section-educacao",
+      "title": "Educação",
+      "subtitle": "Público",
+      "description": "Browse the latest Educação stories from Público",
+      "mode": "view",
+      "keywords": [
+        "education",
+        "escola"
+      ]
+    },
+    {
+      "name": "section-saude",
+      "title": "Saúde",
+      "subtitle": "Público",
+      "description": "Browse the latest Saúde stories from Público",
+      "mode": "view",
+      "keywords": [
+        "health"
+      ]
+    },
+    {
+      "name": "section-ambiente",
+      "title": "Ambiente",
+      "subtitle": "Público",
+      "description": "Browse the latest Ambiente stories from Público",
+      "mode": "view",
+      "keywords": [
+        "environment"
+      ]
+    },
+    {
+      "name": "section-azul",
+      "title": "Azul",
+      "subtitle": "Público",
+      "description": "Browse the latest Azul stories from Público",
+      "mode": "view",
+      "keywords": [
+        "oceanos",
+        "clima"
+      ]
+    },
+    {
+      "name": "section-ecosfera",
+      "title": "Ecosfera",
+      "subtitle": "Público",
+      "description": "Browse the latest Ecosfera stories from Público",
+      "mode": "view",
+      "keywords": [
+        "clima",
+        "sustentabilidade"
+      ]
+    },
+    {
+      "name": "section-parlamento",
+      "title": "Parlamento",
+      "subtitle": "Público",
+      "description": "Browse the latest Parlamento stories from Público",
+      "mode": "view",
+      "keywords": [
+        "assembleia"
+      ]
+    },
+    {
+      "name": "section-gente",
+      "title": "Gente",
+      "subtitle": "Público",
+      "description": "Browse the latest Gente stories from Público",
+      "mode": "view",
+      "keywords": [
+        "people",
+        "celebridades"
+      ]
+    },
+    {
+      "name": "section-impar",
+      "title": "Ímpar",
+      "subtitle": "Público",
+      "description": "Browse the latest Ímpar stories from Público",
+      "mode": "view",
+      "keywords": [
+        "lifestyle",
+        "bem-estar"
+      ]
+    },
+    {
+      "name": "section-p3",
+      "title": "P3",
+      "subtitle": "Público",
+      "description": "Browse the latest P3 stories from Público",
+      "mode": "view",
+      "keywords": [
+        "jovem"
+      ]
+    },
+    {
+      "name": "section-ipsilon",
+      "title": "Ípsilon",
+      "subtitle": "Público",
+      "description": "Browse the latest Ípsilon stories from Público",
+      "mode": "view",
+      "keywords": [
+        "cultura",
+        "música",
+        "cinema"
+      ]
+    },
+    {
+      "name": "section-fugas",
+      "title": "Fugas",
+      "subtitle": "Público",
+      "description": "Browse the latest Fugas stories from Público",
+      "mode": "view",
+      "keywords": [
+        "travel",
+        "viagens"
+      ]
+    },
+    {
+      "name": "section-viagens",
+      "title": "Viagens",
+      "subtitle": "Público",
+      "description": "Browse the latest Viagens stories from Público",
+      "mode": "view",
+      "keywords": [
+        "travel"
+      ]
+    },
+    {
+      "name": "section-gastronomia",
+      "title": "Gastronomia",
+      "subtitle": "Público",
+      "description": "Browse the latest Gastronomia stories from Público",
+      "mode": "view",
+      "keywords": [
+        "food",
+        "comida"
+      ]
+    },
+    {
+      "name": "section-casa",
+      "title": "Casa",
+      "subtitle": "Público",
+      "description": "Browse the latest Casa stories from Público",
+      "mode": "view",
+      "keywords": [
+        "home",
+        "decoração"
+      ]
+    },
+    {
+      "name": "section-automoveis",
+      "title": "Automóveis",
+      "subtitle": "Público",
+      "description": "Browse the latest Automóveis stories from Público",
+      "mode": "view",
+      "keywords": [
+        "cars",
+        "carros"
+      ]
+    },
+    {
+      "name": "section-multimedia",
+      "title": "Multimédia",
+      "subtitle": "Público",
+      "description": "Browse the latest Multimédia stories from Público",
+      "mode": "view",
+      "keywords": [
+        "video",
+        "media"
+      ]
+    },
+    {
+      "name": "section-videos",
+      "title": "Vídeos",
+      "subtitle": "Público",
+      "description": "Browse the latest Vídeos stories from Público",
+      "mode": "view",
+      "keywords": [
+        "video"
+      ]
+    },
+    {
+      "name": "section-podcasts",
+      "title": "Podcasts",
+      "subtitle": "Público",
+      "description": "Browse the latest Podcasts stories from Público",
+      "mode": "view",
+      "keywords": [
+        "áudio",
+        "audio"
+      ]
+    },
+    {
+      "name": "section-fotogaleria",
+      "title": "Fotogaleria",
+      "subtitle": "Público",
+      "description": "Browse the latest Fotogaleria stories from Público",
+      "mode": "view",
+      "keywords": [
+        "fotografia",
+        "photos"
+      ]
     }
   ],
   "preferences": [
@@ -73,6 +436,8 @@
   "scripts": {
     "build": "ray build",
     "dev": "ray develop",
+    "discover": "node scripts/discover-endpoints.mjs",
+    "generate:sections": "node scripts/generate-sections.mjs",
     "fix-lint": "ray lint --fix",
     "lint": "ray lint",
     "publish": "npx @raycast/api@latest publish",
