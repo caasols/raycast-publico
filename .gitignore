@@ -16,6 +16,7 @@ docs/
 
 # agent tooling
 .claude/
+.superpowers/
 
 # Raycast specific files
 raycast-env.d.ts
