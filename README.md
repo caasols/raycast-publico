@@ -8,14 +8,14 @@ Browse the latest articles, jump straight into a section, search by topic, and r
 
 ![Browse Economy: the article list on the left, the selected article's summary, author, date, and topics on the right](./metadata/publico-1.png)
 
-Público is a Portuguese daily newspaper. This extension talks to Público's public JSON API (`https://www.publico.pt/api`) and needs no account, key, or binary installed: the two feed commands, the 34 section commands, and search all read the same set of open list endpoints. Reading an article renders whatever the API returns for it inside Raycast, and Open in Browser is always one keystroke away for the rest.
+Público is a Portuguese daily newspaper. This extension talks to Público's public JSON API (`https://www.publico.pt/api`) and needs no account, key, or binary installed: the two feed commands, the 34 section commands, and search all read the same set of open list endpoints. Each article's summary, author, date, and topics are shown inside Raycast, and Enter opens the full article on publico.pt.
 
 ## Features
 
 - Browse the latest articles and the ones Público is currently featuring
 - Jump straight to any of 34 Público sections, each as its own root command
 - Search by topic, person, place, or team, and get the articles filed under it
-- Read an article inside Raycast, with author, publication date, and topic tags in the detail pane
+- See each article's summary, author, publication date, and topic tags without leaving the list
 - Copy an article's URL or title, or open it in your browser, without leaving the list
 - Search in either language: section names are English, and typing `desporto` or `saúde` still finds Sports and Health
 
@@ -32,8 +32,7 @@ Every list behaves the same way. Select an article to see its summary, author, p
 
 | Action            | Shortcut       | What it does                                     |
 | ----------------- | -------------- | ------------------------------------------------ |
-| `Read Article`    | `Enter`        | Opens the article inside Raycast                 |
-| `Open in Browser` |                | Opens the article on publico.pt                  |
+| `Open in Browser` | `Enter`        | Opens the article on publico.pt                  |
 | `Copy URL`        | `Cmd C`        | Copies the article link                          |
 | `Copy Title`      | `Cmd Shift C`  | Copies the article title                         |
 | `Refresh`         | `Cmd R`        | Refetches the current feed                       |
@@ -75,8 +74,7 @@ The extension is read-only and anonymous. It sends no credentials, has no teleme
 
 - Público's list endpoints return about 10 articles each and ignore paging parameters, so `Max Articles` is an upper bound rather than a target. Setting it to 50 will not produce more than the API serves.
 - Search matches Público topics, not arbitrary text. See the section above.
-- `Read Article` renders what the API returns for that article. When the response carries no body, the reader says so and points you to Open in Browser.
-- The `Summarize` action is a placeholder: it currently shows a "coming soon" toast and does not summarize anything yet.
+- Full article text is not available. Público's API returns only a summary of about 150 characters, and the public article page is protected against non-browser requests, so the extension shows the summary and opens the browser for the rest.
 
 ## Getting Started
 
