@@ -26,10 +26,18 @@
     },
     {
       "name": "search-news",
-      "title": "Search News",
+      "title": "Browse Topic",
       "subtitle": "Público",
-      "description": "Search Público for articles by topic, person, place, or team",
-      "mode": "view"
+      "description": "Browse Público articles by topic, person, place, or team",
+      "mode": "view",
+      "keywords": [
+        "search",
+        "pesquisa",
+        "procurar",
+        "topic",
+        "tópico",
+        "notícias"
+      ]
     },
     {
       "name": "section-politica",
