@@ -4,7 +4,7 @@
 ![React](https://img.shields.io/badge/React-black?logo=react&style=flat)
 ![TypeScript](https://img.shields.io/badge/TypeScript-black?logo=typescript&style=flat)
 
-Browse the latest headlines, jump straight into a section, search by topic, and read articles from [Público](https://www.publico.pt/) directly from your command bar.
+Browse the latest articles, jump straight into a section, search by topic, and read them from [Público](https://www.publico.pt/) directly from your command bar.
 
 ![Browse Popular News: the article list on the left, the selected article's summary, author, date, and topics on the right](./metadata/publico-1.png)
 
@@ -12,7 +12,7 @@ Público is a Portuguese daily newspaper. This extension talks to Público's pub
 
 ## Features
 
-- Browse the latest headlines and the day's most popular stories
+- Browse the latest articles and the ones Público is currently featuring
 - Jump straight to any of 34 Público sections, each as its own root command
 - Search by topic, person, place, or team, and get the articles filed under it
 - Read an article inside Raycast, with author, publication date, and topic tags in the detail pane
@@ -21,21 +21,21 @@ Público is a Portuguese daily newspaper. This extension talks to Público's pub
 
 ## Commands
 
-| Command             | Description                                                                                       |
-| ------------------- | ------------------------------------------------------------------------------------------------- |
-| `Browse Latest News`  | The latest articles from Público, newest first                                                  |
-| `Browse Popular News` | The articles Público is currently featuring                                                     |
-| `Search News`         | Search by topic, person, place, or team, for example `Benfica`, `Trump`, `inteligência artificial` |
-| `Browse <Section>`    | 34 commands, one for each Público section, listed below                                         |
+| Command               | Description                                                                                        |
+| --------------------- | -------------------------------------------------------------------------------------------------- |
+| `Browse Latest News`  | The latest articles from Público, newest first                                                     |
+| `Browse Popular News` | The articles Público is currently featuring                                                        |
+| `Search News`         | Search by topic, person, place, or team, for example `Benfica`, `Trump`, `inteligência artificial`  |
+| `Browse <Section>`    | 34 commands, one for each Público section, listed below                                            |
 
-Every list behaves the same way. Select a story to see its summary, author, publication date, and topics in the detail pane, then use one of these actions:
+Every list behaves the same way. Select an article to see its summary, author, publication date, and topics in the detail pane, then use one of these actions:
 
 | Action            | Shortcut       | What it does                                     |
 | ----------------- | -------------- | ------------------------------------------------ |
 | `Read Article`    | `Enter`        | Opens the article inside Raycast                 |
 | `Open in Browser` |                | Opens the article on publico.pt                  |
 | `Copy URL`        | `Cmd C`        | Copies the article link                          |
-| `Copy Title`      | `Cmd Shift C`  | Copies the article headline                      |
+| `Copy Title`      | `Cmd Shift C`  | Copies the article title                         |
 | `Refresh`         | `Cmd R`        | Refetches the current feed                       |
 
 ### Sections
