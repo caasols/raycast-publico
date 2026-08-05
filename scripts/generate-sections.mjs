@@ -43,7 +43,10 @@ export default function Command() {
 function commandEntry(s) {
   return {
     name: `section-${s.slug}`,
-    title: s.title,
+    // Command titles are verb-led ("Browse Brazil") to match the core
+    // commands. `s.title` stays the bare section name, because it is also
+    // interpolated into copy where a verb would read wrong ("Search Brazil…").
+    title: `Browse ${s.title}`,
     subtitle: "Público",
     description: `Browse the latest ${s.title} articles from Público`,
     mode: "view",

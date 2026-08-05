@@ -25,6 +25,31 @@ function filesToScan(): string[] {
   return out;
 }
 
+describe("command titles", () => {
+  it("leads every command title with a verb", () => {
+    const pkg = JSON.parse(
+      readFileSync(join(ROOT, "package.json"), "utf8"),
+    ) as { commands: Array<{ name: string; title: string }> };
+    const offenders = pkg.commands
+      .filter((c) => !/^(Browse|Search) /.test(c.title))
+      .map((c) => `${c.name}: ${c.title}`);
+    expect(offenders).toEqual([]);
+  });
+
+  it("does not leak the verb prefix into section copy", () => {
+    // `Browse` belongs to the command title only. The bare section name is
+    // what gets interpolated into placeholders and error toasts.
+    const offenders = readdirSync(join(ROOT, "src"))
+      .filter((f) => f.startsWith("section-") && f.endsWith(".tsx"))
+      .filter((f) =>
+        /(?:Placeholder|errorToastTitle|emptyTitle)="[^"]*Browse /.test(
+          readFileSync(join(ROOT, "src", f), "utf8"),
+        ),
+      );
+    expect(offenders).toEqual([]);
+  });
+});
+
 describe("copy conventions", () => {
   it("uses no em-dash anywhere in source, manifest, or the generator", () => {
     const offenders = filesToScan().filter((f) =>

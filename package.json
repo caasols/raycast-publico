@@ -12,14 +12,14 @@
   "commands": [
     {
       "name": "view-popular-news",
-      "title": "Popular News",
+      "title": "Browse Popular News",
       "subtitle": "Público",
       "description": "Browse the most popular articles from Público",
       "mode": "view"
     },
     {
       "name": "view-latest-news",
-      "title": "Latest News",
+      "title": "Browse Latest News",
       "subtitle": "Público",
       "description": "Browse the latest articles from Público",
       "mode": "view"
@@ -33,7 +33,7 @@
     },
     {
       "name": "section-politica",
-      "title": "Politics",
+      "title": "Browse Politics",
       "subtitle": "Público",
       "description": "Browse the latest Politics articles from Público",
       "mode": "view",
@@ -46,7 +46,7 @@
     },
     {
       "name": "section-mundo",
-      "title": "World",
+      "title": "Browse World",
       "subtitle": "Público",
       "description": "Browse the latest World articles from Público",
       "mode": "view",
@@ -57,7 +57,7 @@
     },
     {
       "name": "section-economia",
-      "title": "Economy",
+      "title": "Browse Economy",
       "subtitle": "Público",
       "description": "Browse the latest Economy articles from Público",
       "mode": "view",
@@ -69,7 +69,7 @@
     },
     {
       "name": "section-sociedade",
-      "title": "Society",
+      "title": "Browse Society",
       "subtitle": "Público",
       "description": "Browse the latest Society articles from Público",
       "mode": "view",
@@ -79,7 +79,7 @@
     },
     {
       "name": "section-ciencia",
-      "title": "Science",
+      "title": "Browse Science",
       "subtitle": "Público",
       "description": "Browse the latest Science articles from Público",
       "mode": "view",
@@ -90,7 +90,7 @@
     },
     {
       "name": "section-tecnologia",
-      "title": "Technology",
+      "title": "Browse Technology",
       "subtitle": "Público",
       "description": "Browse the latest Technology articles from Público",
       "mode": "view",
@@ -101,7 +101,7 @@
     },
     {
       "name": "section-cultura",
-      "title": "Culture",
+      "title": "Browse Culture",
       "subtitle": "Público",
       "description": "Browse the latest Culture articles from Público",
       "mode": "view",
@@ -111,7 +111,7 @@
     },
     {
       "name": "section-desporto",
-      "title": "Sports",
+      "title": "Browse Sports",
       "subtitle": "Público",
       "description": "Browse the latest Sports articles from Público",
       "mode": "view",
@@ -123,7 +123,7 @@
     },
     {
       "name": "section-opiniao",
-      "title": "Opinion",
+      "title": "Browse Opinion",
       "subtitle": "Público",
       "description": "Browse the latest Opinion articles from Público",
       "mode": "view",
@@ -135,7 +135,7 @@
     },
     {
       "name": "section-local",
-      "title": "Local",
+      "title": "Browse Local",
       "subtitle": "Público",
       "description": "Browse the latest Local articles from Público",
       "mode": "view",
@@ -146,7 +146,7 @@
     },
     {
       "name": "section-lisboa",
-      "title": "Lisbon",
+      "title": "Browse Lisbon",
       "subtitle": "Público",
       "description": "Browse the latest Lisbon articles from Público",
       "mode": "view",
@@ -156,7 +156,7 @@
     },
     {
       "name": "section-porto",
-      "title": "Porto",
+      "title": "Browse Porto",
       "subtitle": "Público",
       "description": "Browse the latest Porto articles from Público",
       "mode": "view",
@@ -167,7 +167,7 @@
     },
     {
       "name": "section-europa",
-      "title": "Europe",
+      "title": "Browse Europe",
       "subtitle": "Público",
       "description": "Browse the latest Europe articles from Público",
       "mode": "view",
@@ -179,7 +179,7 @@
     },
     {
       "name": "section-brasil",
-      "title": "Brazil",
+      "title": "Browse Brazil",
       "subtitle": "Público",
       "description": "Browse the latest Brazil articles from Público",
       "mode": "view",
@@ -189,7 +189,7 @@
     },
     {
       "name": "section-media",
-      "title": "Media",
+      "title": "Browse Media",
       "subtitle": "Público",
       "description": "Browse the latest Media articles from Público",
       "mode": "view",
@@ -200,7 +200,7 @@
     },
     {
       "name": "section-educacao",
-      "title": "Education",
+      "title": "Browse Education",
       "subtitle": "Público",
       "description": "Browse the latest Education articles from Público",
       "mode": "view",
@@ -212,7 +212,7 @@
     },
     {
       "name": "section-saude",
-      "title": "Health",
+      "title": "Browse Health",
       "subtitle": "Público",
       "description": "Browse the latest Health articles from Público",
       "mode": "view",
@@ -223,7 +223,7 @@
     },
     {
       "name": "section-ambiente",
-      "title": "Environment",
+      "title": "Browse Environment",
       "subtitle": "Público",
       "description": "Browse the latest Environment articles from Público",
       "mode": "view",
@@ -233,7 +233,7 @@
     },
     {
       "name": "section-azul",
-      "title": "Azul",
+      "title": "Browse Azul",
       "subtitle": "Público",
       "description": "Browse the latest Azul articles from Público",
       "mode": "view",
@@ -246,7 +246,7 @@
     },
     {
       "name": "section-ecosfera",
-      "title": "Ecosfera",
+      "title": "Browse Ecosfera",
       "subtitle": "Público",
       "description": "Browse the latest Ecosfera articles from Público",
       "mode": "view",
@@ -259,7 +259,7 @@
     },
     {
       "name": "section-parlamento",
-      "title": "Parliament",
+      "title": "Browse Parliament",
       "subtitle": "Público",
       "description": "Browse the latest Parliament articles from Público",
       "mode": "view",
@@ -270,7 +270,7 @@
     },
     {
       "name": "section-gente",
-      "title": "People",
+      "title": "Browse People",
       "subtitle": "Público",
       "description": "Browse the latest People articles from Público",
       "mode": "view",
@@ -281,7 +281,7 @@
     },
     {
       "name": "section-impar",
-      "title": "Ímpar",
+      "title": "Browse Ímpar",
       "subtitle": "Público",
       "description": "Browse the latest Ímpar articles from Público",
       "mode": "view",
@@ -294,7 +294,7 @@
     },
     {
       "name": "section-p3",
-      "title": "P3",
+      "title": "Browse P3",
       "subtitle": "Público",
       "description": "Browse the latest P3 articles from Público",
       "mode": "view",
@@ -306,7 +306,7 @@
     },
     {
       "name": "section-ipsilon",
-      "title": "Ípsilon",
+      "title": "Browse Ípsilon",
       "subtitle": "Público",
       "description": "Browse the latest Ípsilon articles from Público",
       "mode": "view",
@@ -320,7 +320,7 @@
     },
     {
       "name": "section-fugas",
-      "title": "Fugas",
+      "title": "Browse Fugas",
       "subtitle": "Público",
       "description": "Browse the latest Fugas articles from Público",
       "mode": "view",
@@ -333,7 +333,7 @@
     },
     {
       "name": "section-viagens",
-      "title": "Travel",
+      "title": "Browse Travel",
       "subtitle": "Público",
       "description": "Browse the latest Travel articles from Público",
       "mode": "view",
@@ -343,7 +343,7 @@
     },
     {
       "name": "section-gastronomia",
-      "title": "Food",
+      "title": "Browse Food",
       "subtitle": "Público",
       "description": "Browse the latest Food articles from Público",
       "mode": "view",
@@ -355,7 +355,7 @@
     },
     {
       "name": "section-casa",
-      "title": "Home",
+      "title": "Browse Home",
       "subtitle": "Público",
       "description": "Browse the latest Home articles from Público",
       "mode": "view",
@@ -366,7 +366,7 @@
     },
     {
       "name": "section-automoveis",
-      "title": "Cars",
+      "title": "Browse Cars",
       "subtitle": "Público",
       "description": "Browse the latest Cars articles from Público",
       "mode": "view",
@@ -378,7 +378,7 @@
     },
     {
       "name": "section-multimedia",
-      "title": "Multimedia",
+      "title": "Browse Multimedia",
       "subtitle": "Público",
       "description": "Browse the latest Multimedia articles from Público",
       "mode": "view",
@@ -390,7 +390,7 @@
     },
     {
       "name": "section-videos",
-      "title": "Videos",
+      "title": "Browse Videos",
       "subtitle": "Público",
       "description": "Browse the latest Videos articles from Público",
       "mode": "view",
@@ -401,7 +401,7 @@
     },
     {
       "name": "section-podcasts",
-      "title": "Podcasts",
+      "title": "Browse Podcasts",
       "subtitle": "Público",
       "description": "Browse the latest Podcasts articles from Público",
       "mode": "view",
@@ -413,7 +413,7 @@
     },
     {
       "name": "section-fotogaleria",
-      "title": "Photo Gallery",
+      "title": "Browse Photo Gallery",
       "subtitle": "Público",
       "description": "Browse the latest Photo Gallery articles from Público",
       "mode": "view",
