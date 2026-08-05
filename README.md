@@ -25,7 +25,7 @@ Público is a Portuguese daily newspaper. This extension talks to Público's pub
 | --------------------- | -------------------------------------------------------------------------------------------------- |
 | `Browse Latest News`  | The latest articles from Público, newest first                                                     |
 | `Browse Popular News` | The articles Público is currently featuring                                                        |
-| `Search News`         | Search by topic, person, place, or team, for example `Benfica`, `Trump`, `inteligência artificial`  |
+| `Browse Topic`        | Browse by topic, person, place, or team, for example `Benfica`, `Trump`, `inteligência artificial`  |
 | `Browse <Section>`    | 34 commands, one for each Público section, listed below                                            |
 
 Every list behaves the same way. Select an article to see its summary, author, publication date, and topics in the detail pane, then use one of these actions:
@@ -64,16 +64,18 @@ Nothing is required to start using the extension. There is a single optional pre
 
 ## How search works
 
-Público's `/pesquisa` page is behind a bot wall, and the API's own search route ignores its query parameter, so `Search News` searches by topic instead. Your query is slugified (lowercase, accents stripped, spaces turned into hyphens, so `Donald Trump` becomes `donald-trump`) and requested as a Público topic feed. If nothing matches, the query is retried with Portuguese stopwords removed, so `guerra na Ucrânia` also tries `guerra-ucrania`.
+`Browse Topic` matches Público's own topics rather than doing free-text search. Your query is slugified (lowercase, accents stripped, spaces turned into hyphens, so `Donald Trump` becomes `donald-trump`) and requested as a Público topic feed. If nothing matches, the query is retried with Portuguese stopwords removed, so `guerra na Ucrânia` also tries `guerra-ucrania`.
 
-This is fast and accurate for subjects, people, places, and teams, which is what most searches are. It does not do free-text matching: a phrase that is not a Público topic returns no results rather than a fuzzy list.
+That covers most of what people search for: in a 12-query sample, 9 returned results. Named entities work well; descriptive phrases such as `preço da habitação` have no matching topic. When nothing matches, the command offers to run the same query against Público's own full-text search in your browser.
+
+The extension cannot perform that full-text search itself. Público's search pages are protected by an AWS WAF challenge that requires a browser to solve, and every open JSON endpoint ignores its query parameter.
 
 ## Requirements and limits
 
 The extension is read-only and anonymous. It sends no credentials, has no telemetry, and contacts no host other than `publico.pt`.
 
 - Público's list endpoints return about 10 articles each and ignore paging parameters, so `Max Articles` is an upper bound rather than a target. Setting it to 50 will not produce more than the API serves.
-- Search matches Público topics, not arbitrary text. See the section above.
+- `Browse Topic` matches Público topics, not arbitrary text. See the section above.
 - Full article text is not available. Público's API returns only a summary of about 150 characters, and the public article page is protected against non-browser requests, so the extension shows the summary and opens the browser for the rest.
 
 ## Getting Started
