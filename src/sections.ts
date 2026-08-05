@@ -1,7 +1,7 @@
 import sectionsData from "./sections.json";
 
 export interface Section {
-  /** Público API slug — used as `/api/list/{slug}`. */
+  /** Público API slug, used as `/api/list/{slug}`. */
   slug: string;
   /** Human-readable Portuguese display name. */
   title: string;

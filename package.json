@@ -12,23 +12,23 @@
   "commands": [
     {
       "name": "view-popular-news",
-      "title": "View Popular News",
+      "title": "Popular News",
       "subtitle": "Público",
-      "description": "Browse the most popular stories from Público",
+      "description": "Browse the most popular articles from Público",
       "mode": "view"
     },
     {
       "name": "view-latest-news",
-      "title": "View Latest News",
+      "title": "Latest News",
       "subtitle": "Público",
-      "description": "Browse the latest headlines from Público",
+      "description": "Browse the latest articles from Público",
       "mode": "view"
     },
     {
       "name": "search-news",
       "title": "Search News",
       "subtitle": "Público",
-      "description": "Search for articles on Público",
+      "description": "Search Público for articles by topic, person, place, or team",
       "mode": "view"
     },
     {
