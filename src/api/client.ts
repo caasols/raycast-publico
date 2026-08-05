@@ -99,7 +99,7 @@ export async function fetchTopNews(): Promise<Article[]> {
 
 /**
  * Fetch a section feed by slug (e.g. "politica", "desporto").
- * Returns up to ~10 of the latest articles — the API caps every list here.
+ * Returns up to ~10 of the latest articles. The API caps every list here.
  */
 export async function fetchSection(slug: string): Promise<Article[]> {
   return fetchArticleList(
@@ -265,7 +265,7 @@ export async function fetchArticleDetail(
       return null;
     }
   } catch (error) {
-    // Re-throw abort errors without wrapping — they're intentional
+    // Re-throw abort errors without wrapping, they're intentional
     if (error instanceof Error && error.name === "AbortError") {
       throw error;
     }

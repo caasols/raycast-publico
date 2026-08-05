@@ -5,10 +5,10 @@ export default function Command() {
   return (
     <NewsListView
       fetchFn={fetchLatestHeadlines}
-      searchBarPlaceholder="Search latest headlines..."
-      errorToastTitle="Unable to load latest news"
-      emptyTitle="No headlines right now"
-      emptyDescription="Check back soon — the latest stories from Público will appear here."
+      searchBarPlaceholder="Search latest articles…"
+      errorToastTitle="Unable to load latest articles"
+      emptyTitle="No articles right now"
+      emptyDescription="Check back soon. The latest articles from Público will appear here."
     />
   );
 }

@@ -154,7 +154,7 @@ export default function Command() {
         <List.EmptyView
           icon={Icon.MagnifyingGlass}
           title="Search Público"
-          description="Search by topic, person, place, or team — e.g. “Benfica”, “Trump”, “inteligência artificial”."
+          description='Search by topic, person, place, or team. For example "Benfica", "Trump", "inteligência artificial".'
         />
       );
     }
@@ -176,7 +176,7 @@ export default function Command() {
     <List
       isLoading={isLoading}
       onSearchTextChange={setSearchText}
-      searchBarPlaceholder="Search Público news..."
+      searchBarPlaceholder="Search Público…"
       isShowingDetail
       throttle
       onSelectionChange={(id) => {
