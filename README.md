@@ -6,7 +6,7 @@
 
 Browse the latest articles, jump straight into a section, search by topic, and read them from [Público](https://www.publico.pt/) directly from your command bar.
 
-![Browse Popular News: the article list on the left, the selected article's summary, author, date, and topics on the right](./metadata/publico-1.png)
+![Browse Economy: the article list on the left, the selected article's summary, author, date, and topics on the right](./metadata/publico-1.png)
 
 Público is a Portuguese daily newspaper. This extension talks to Público's public JSON API (`https://www.publico.pt/api`) and needs no account, key, or binary installed: the two feed commands, the 34 section commands, and search all read the same set of open list endpoints. Reading an article renders whatever the API returns for it inside Raycast, and Open in Browser is always one keystroke away for the rest.
 
