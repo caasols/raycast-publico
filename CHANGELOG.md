@@ -1,5 +1,16 @@
 # Público Changelog
 
+## [English Command Titles] - {PR_MERGE_DATE}
+
+### Changed
+
+- Section commands are now titled in English (Politics, Sports, Health) instead of Portuguese, matching the rest of the interface. The Portuguese name is kept as a search keyword, so typing `desporto` still finds Sports.
+- Six Público mastheads keep their names: P3, Ípsilon, Fugas, Azul, Ecosfera, and Ímpar.
+- Every command title now leads with a verb, so the list reads as one system: `Browse Politics`, `Browse Latest News`, `Search News`.
+- Copy across the extension now uses one word per concept and a single ellipsis style.
+
+Command ids are unchanged, so existing aliases and hotkeys keep working.
+
 ## [Sections and Topic Search] - {PR_MERGE_DATE}
 
 ### Added

@@ -6,7 +6,7 @@
 
 Browse the latest headlines, jump straight into a section, search by topic, and read articles from [Público](https://www.publico.pt/) directly from your command bar.
 
-![View Popular News: the story list on the left, the selected article's summary, author, date, and topics on the right](./metadata/publico-1.png)
+![Browse Popular News: the article list on the left, the selected article's summary, author, date, and topics on the right](./metadata/publico-1.png)
 
 Público is a Portuguese daily newspaper. This extension talks to Público's public JSON API (`https://www.publico.pt/api`) and needs no account, key, or binary installed: the two feed commands, the 34 section commands, and search all read the same set of open list endpoints. Reading an article renders whatever the API returns for it inside Raycast, and Open in Browser is always one keystroke away for the rest.
 
@@ -17,16 +17,16 @@ Público is a Portuguese daily newspaper. This extension talks to Público's pub
 - Search by topic, person, place, or team, and get the articles filed under it
 - Read an article inside Raycast, with author, publication date, and topic tags in the detail pane
 - Copy an article's URL or title, or open it in your browser, without leaving the list
-- Match section commands in English too: typing `sports` finds Desporto, `health` finds Saúde
+- Search in either language: section names are English, and typing `desporto` or `saúde` still finds Sports and Health
 
 ## Commands
 
 | Command             | Description                                                                                       |
 | ------------------- | ------------------------------------------------------------------------------------------------- |
-| `View Latest News`  | The latest headlines from Público, newest first                                                   |
-| `View Popular News` | The stories Público is currently featuring                                                        |
-| `Search News`       | Search by topic, person, place, or team, for example `Benfica`, `Trump`, `inteligência artificial` |
-| One per section     | 34 commands, one for each Público section, listed below                                           |
+| `Browse Latest News`  | The latest articles from Público, newest first                                                  |
+| `Browse Popular News` | The articles Público is currently featuring                                                     |
+| `Search News`         | Search by topic, person, place, or team, for example `Benfica`, `Trump`, `inteligência artificial` |
+| `Browse <Section>`    | 34 commands, one for each Público section, listed below                                         |
 
 Every list behaves the same way. Select a story to see its summary, author, publication date, and topics in the detail pane, then use one of these actions:
 
@@ -40,16 +40,18 @@ Every list behaves the same way. Select a story to see its summary, author, publ
 
 ### Sections
 
-Each section is its own root command, so you can bind Política or Desporto to an alias or a hotkey and skip the extension menu entirely.
+Each section is its own root command, named `Browse <Section>`, so you can bind Politics or Sports to an alias or a hotkey and skip the extension menu entirely.
 
-| Group                | Commands                                                                |
+| Group                | Sections                                                                |
 | -------------------- | ----------------------------------------------------------------------- |
-| News and politics    | Política, Parlamento, Mundo, Europa, Brasil, Economia, Sociedade, Local, Lisboa, Porto |
-| Knowledge and health | Ciência, Tecnologia, Educação, Saúde, Media                             |
-| Environment          | Ambiente, Azul, Ecosfera                                                |
-| Culture and life     | Cultura, Ípsilon, Opinião, Desporto, Gente, Ímpar, P3                   |
-| Travel and living    | Fugas, Viagens, Gastronomia, Casa, Automóveis                           |
-| Multimedia           | Multimédia, Vídeos, Podcasts, Fotogaleria                               |
+| News and politics    | Politics, Parliament, World, Europe, Brazil, Economy, Society, Local, Lisbon, Porto |
+| Knowledge and health | Science, Technology, Education, Health, Media                           |
+| Environment          | Environment, Azul, Ecosfera                                             |
+| Culture and life     | Culture, Ípsilon, Opinion, Sports, People, Ímpar, P3                    |
+| Travel and living    | Fugas, Travel, Food, Home, Cars                                         |
+| Multimedia           | Multimedia, Videos, Podcasts, Photo Gallery                             |
+
+Six keep their Portuguese names because they are Público mastheads rather than generic sections: `P3` (youth), `Ípsilon` (culture), `Fugas` (travel), `Azul` (oceans), `Ecosfera` (climate), and `Ímpar` (lifestyle). Each is still findable in English, since typing `travel`, `culture`, or `climate` surfaces them.
 
 The list lives in `src/sections.json`. To add or remove one, edit that file and run `npm run generate:sections`, which rewrites both the command components and the `commands` block in `package.json`.
 
