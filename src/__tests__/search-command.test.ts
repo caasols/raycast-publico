@@ -33,3 +33,28 @@ describe("the topic command", () => {
     }
   });
 });
+
+describe("the search fallback", () => {
+  const source = () =>
+    readFileSync(join(ROOT, "src", "search-news.tsx"), "utf8");
+
+  it("offers Publico's own search when no topic matches", () => {
+    expect(source()).toContain("publico.pt/pesquisa?query=");
+  });
+
+  it("percent-encodes the query", () => {
+    // Real queries contain spaces and accents, such as "guerra na ucrania"
+    // and "preco da habitacao". An unencoded URL would break them.
+    expect(source()).toMatch(/encodeURIComponent\(\s*searchText/);
+  });
+
+  it("does not offer a blank search before anything is typed", () => {
+    // The initial prompt has no query yet, so a fallback there would open an
+    // empty search page.
+    const text = source();
+    const initial = text.indexOf('title="Browse Público topics"');
+    expect(initial).toBeGreaterThan(-1);
+    const block = text.slice(initial, initial + 400);
+    expect(block).not.toContain("pesquisa?query=");
+  });
+});

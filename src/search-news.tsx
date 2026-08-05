@@ -1,4 +1,4 @@
-import { List, Icon } from "@raycast/api";
+import { List, Icon, ActionPanel, Action } from "@raycast/api";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   searchArticlesByTag,
@@ -11,6 +11,15 @@ import { getArticleUrl } from "./utils/article";
 import { ArticleListItem } from "./components/ArticleListItem";
 import { DETAIL_LOAD_DEBOUNCE_MS } from "./constants";
 import { getMaxArticles } from "./preferences";
+
+/**
+ * Público's own full-text search. The extension cannot query it directly:
+ * the route sits behind an AWS WAF JavaScript challenge that needs a browser
+ * engine. Handing the query to the browser is the closest we can get.
+ */
+function publicoSearchUrl(searchText: string): string {
+  return `https://www.publico.pt/pesquisa?query=${encodeURIComponent(searchText)}`;
+}
 
 export default function Command() {
   const [searchText, setSearchText] = useState("");
@@ -145,6 +154,14 @@ export default function Command() {
           icon={Icon.ExclamationMark}
           title="Unable to load results"
           description={errorMessage}
+          actions={
+            <ActionPanel>
+              <Action.OpenInBrowser
+                title="Search on Público.pt"
+                url={publicoSearchUrl(searchText)}
+              />
+            </ActionPanel>
+          }
         />
       );
     }
@@ -153,8 +170,8 @@ export default function Command() {
       return (
         <List.EmptyView
           icon={Icon.MagnifyingGlass}
-          title="Search Público"
-          description='Search by topic, person, place, or team. For example "Benfica", "Trump", "inteligência artificial".'
+          title="Browse Público topics"
+          description='Type a subject, person, place, or team. For example "Benfica", "Trump", "inteligência artificial".'
         />
       );
     }
@@ -163,8 +180,16 @@ export default function Command() {
       return (
         <List.EmptyView
           icon={Icon.XmarkCircle}
-          title="No articles found"
-          description={`No Público topic matches "${searchText}". Try a single subject, name, or place.`}
+          title="No topic matches that"
+          description={`Público has no topic for "${searchText}". This command matches topics, so single subjects, names, places, and teams work best. Press Enter to search publico.pt for the full text instead.`}
+          actions={
+            <ActionPanel>
+              <Action.OpenInBrowser
+                title="Search on Público.pt"
+                url={publicoSearchUrl(searchText)}
+              />
+            </ActionPanel>
+          }
         />
       );
     }
@@ -176,7 +201,7 @@ export default function Command() {
     <List
       isLoading={isLoading}
       onSearchTextChange={setSearchText}
-      searchBarPlaceholder="Search Público…"
+      searchBarPlaceholder="Search Público topics…"
       isShowingDetail
       throttle
       onSelectionChange={(id) => {
