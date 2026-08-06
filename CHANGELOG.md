@@ -29,7 +29,7 @@
 - **`Read Article`.** Público's API does not return article text, so the reader could only ever tell you to open your browser. Enter now does that directly.
 - **`Summarize` and `View Summary`.** Both were placeholders that did nothing, and one was unreachable. They will return if the article text ever becomes available.
 
-## [Initial Version]
+## [Initial Version] - 2026-03-12
 
 ### Added
 
