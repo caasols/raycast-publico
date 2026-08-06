@@ -1,15 +1,7 @@
-import {
-  ActionPanel,
-  Action,
-  Detail,
-  List,
-  Icon,
-  showToast,
-  Toast,
-} from "@raycast/api";
+import { ActionPanel, Action, List, Icon } from "@raycast/api";
 import { memo } from "react";
 import { Article } from "../api/type";
-import { extractArticleId } from "../api/client";
+import { getArticleId } from "../api/client";
 import {
   cleanDescription,
   extractTags,
@@ -22,13 +14,11 @@ import {
   resolvePublishedDate,
 } from "../utils/article";
 import { MAX_TAGS, SUMMARY_PLACEHOLDER, UNTITLED_ARTICLE } from "../constants";
-import { ArticleView } from "./ArticleView";
 
 interface ArticleListItemProps {
   article: Article;
   enrichedArticle?: Article;
   isLoadingDetail?: boolean;
-  savedSummary?: string;
   onRefresh: () => void;
 }
 
@@ -36,13 +26,12 @@ function ArticleListItemComponent({
   article,
   enrichedArticle,
   isLoadingDetail,
-  savedSummary,
   onRefresh,
 }: ArticleListItemProps) {
   const cleanTitle =
     (article.titulo ? stripHtml(article.titulo) : "") || UNTITLED_ARTICLE;
   const articleUrl = getArticleUrl(article);
-  const articleId = extractArticleId(articleUrl);
+  const articleId = getArticleId(article);
   const itemId = String(article.id);
 
   const authorText = formatAuthors(enrichedArticle?.autores ?? article.autores);
@@ -51,7 +40,7 @@ function ArticleListItemComponent({
   ).slice(0, MAX_TAGS);
 
   const summarySource = enrichedArticle?.descricao ?? article.descricao;
-  const summary = cleanDescription(summarySource);
+  const summary = stripHtml(cleanDescription(summarySource));
   const publishedDate = resolvePublishedDate(enrichedArticle ?? article);
 
   const icon = getArticleIcon(article);
@@ -99,13 +88,6 @@ function ArticleListItemComponent({
       }
       actions={
         <ActionPanel>
-          <Action.Push
-            title="Read Article"
-            icon={Icon.Book}
-            target={
-              <ArticleView articleUrl={articleUrl} articleTitle={cleanTitle} />
-            }
-          />
           <Action.OpenInBrowser title="Open in Browser" url={articleUrl} />
           <Action.CopyToClipboard
             title="Copy URL"
@@ -116,45 +98,6 @@ function ArticleListItemComponent({
             title="Copy Title"
             content={cleanTitle}
             shortcut={{ modifiers: ["cmd", "shift"], key: "c" }}
-          />
-          {savedSummary && (
-            <Action.Push
-              title="View Summary"
-              icon={Icon.Document}
-              shortcut={{ modifiers: ["cmd", "shift"], key: "v" }}
-              target={
-                <Detail
-                  navigationTitle={`Summary: ${cleanTitle}`}
-                  markdown={`# ${cleanTitle}\n\n---\n\n${savedSummary}`}
-                  actions={
-                    <ActionPanel>
-                      <Action.OpenInBrowser
-                        title="Open in Browser"
-                        url={articleUrl}
-                      />
-                      <Action.CopyToClipboard
-                        title="Copy Summary"
-                        content={savedSummary}
-                        shortcut={{ modifiers: ["cmd"], key: "c" }}
-                      />
-                    </ActionPanel>
-                  }
-                />
-              }
-            />
-          )}
-          <Action
-            title="Summarize"
-            icon={Icon.Stars}
-            shortcut={{ modifiers: ["cmd", "shift"], key: "s" }}
-            onAction={() =>
-              showToast({
-                style: Toast.Style.Animated,
-                title: "Coming soon",
-                message:
-                  "Article summarization will be available in a future update.",
-              })
-            }
           />
           <Action
             title="Refresh"

@@ -1,9 +1,10 @@
 import { ActionPanel, Action, List, Icon } from "@raycast/api";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { showFailureToast, useCachedPromise } from "@raycast/utils";
 import { Article } from "../api/type";
 import { ArticleListItem } from "./ArticleListItem";
-import { getMaxArticles } from "../preferences";
+import { limitArticles } from "../preferences";
+import { getErrorMessage } from "../utils/errors";
 
 interface NewsListViewProps {
   fetchFn: () => Promise<Article[]>;
@@ -23,8 +24,10 @@ export function NewsListView({
   const { data, isLoading, error, revalidate } = useCachedPromise(fetchFn, [], {
     keepPreviousData: true,
     onError: (err) => {
-      const message = err instanceof Error ? err.message : String(err);
-      void showFailureToast({ title: errorToastTitle, message });
+      void showFailureToast({
+        title: errorToastTitle,
+        message: getErrorMessage(err) ?? "Unknown error",
+      });
     },
   });
 
@@ -32,79 +35,60 @@ export function NewsListView({
     void revalidate();
   }, [revalidate]);
 
-  const maxArticles = getMaxArticles();
-  const articles = (data ?? []).slice(0, maxArticles);
-  const errorMessage = error
-    ? error instanceof Error
-      ? error.message
-      : String(error)
-    : null;
+  const articles = limitArticles(data ?? []);
+  const errorMessage = getErrorMessage(error);
 
-  if (errorMessage) {
-    return (
-      <List
-        isLoading={isLoading}
-        isShowingDetail={false}
-        searchBarPlaceholder={searchBarPlaceholder}
-      >
-        <List.EmptyView
-          icon={Icon.ExclamationMark}
-          title="Unable to load articles"
-          description={errorMessage}
-          actions={
-            <ActionPanel>
-              <Action
-                title="Retry"
-                icon={Icon.RotateClockwise}
-                onAction={handleRefresh}
-                shortcut={{ modifiers: ["cmd"], key: "r" }}
-              />
-            </ActionPanel>
-          }
-        />
-      </List>
-    );
-  }
+  const emptyView = useMemo(() => {
+    if (errorMessage) {
+      return {
+        icon: Icon.ExclamationMark,
+        title: "Unable to load articles",
+        description: errorMessage,
+      };
+    }
 
-  if (!isLoading && articles.length === 0) {
-    return (
-      <List
-        isLoading={isLoading}
-        isShowingDetail={false}
-        searchBarPlaceholder={searchBarPlaceholder}
-      >
-        <List.EmptyView
-          icon={Icon.Document}
-          title={emptyTitle}
-          description={emptyDescription}
-          actions={
-            <ActionPanel>
-              <Action
-                title="Retry"
-                icon={Icon.RotateClockwise}
-                onAction={handleRefresh}
-                shortcut={{ modifiers: ["cmd"], key: "r" }}
-              />
-            </ActionPanel>
-          }
-        />
-      </List>
-    );
-  }
+    if (!isLoading && articles.length === 0) {
+      return {
+        icon: Icon.Document,
+        title: emptyTitle,
+        description: emptyDescription,
+      };
+    }
+
+    return null;
+  }, [errorMessage, isLoading, articles.length, emptyTitle, emptyDescription]);
 
   return (
     <List
       isLoading={isLoading}
-      isShowingDetail
+      isShowingDetail={!emptyView}
       searchBarPlaceholder={searchBarPlaceholder}
     >
-      {articles.map((article) => (
-        <ArticleListItem
-          key={article.id}
-          article={article}
-          onRefresh={handleRefresh}
+      {emptyView ? (
+        <List.EmptyView
+          icon={emptyView.icon}
+          title={emptyView.title}
+          description={emptyView.description}
+          actions={
+            <ActionPanel>
+              <Action
+                title="Retry"
+                icon={Icon.RotateClockwise}
+                onAction={handleRefresh}
+                shortcut={{ modifiers: ["cmd"], key: "r" }}
+              />
+            </ActionPanel>
+          }
         />
-      ))}
+      ) : (
+        articles.map((article) => (
+          <ArticleListItem
+            key={article.id}
+            article={article}
+            onRefresh={handleRefresh}
+          />
+        ))
+      )}
     </List>
   );
 }

@@ -15,21 +15,53 @@
       "title": "Browse Popular News",
       "subtitle": "Público",
       "description": "Browse the most popular articles from Público",
-      "mode": "view"
+      "mode": "view",
+      "keywords": [
+        "popular news",
+        "popular",
+        "destaque",
+        "destaques",
+        "mais lidas",
+        "news",
+        "notícias",
+        "noticias"
+      ]
     },
     {
       "name": "view-latest-news",
       "title": "Browse Latest News",
       "subtitle": "Público",
       "description": "Browse the latest articles from Público",
-      "mode": "view"
+      "mode": "view",
+      "keywords": [
+        "latest news",
+        "latest",
+        "últimas",
+        "ultimas",
+        "recentes",
+        "news",
+        "notícias",
+        "noticias"
+      ]
     },
     {
       "name": "search-news",
-      "title": "Search News",
+      "title": "Browse Topic",
       "subtitle": "Público",
-      "description": "Search Público for articles by topic, person, place, or team",
-      "mode": "view"
+      "description": "Browse Público articles by topic, person, place, or team",
+      "mode": "view",
+      "keywords": [
+        "search news",
+        "search",
+        "news",
+        "pesquisa",
+        "notícias",
+        "noticias",
+        "procurar",
+        "topic",
+        "tópico",
+        "topico"
+      ]
     },
     {
       "name": "section-politica",
@@ -64,7 +96,11 @@
       "keywords": [
         "economia",
         "negócios",
-        "finanças"
+        "negocios",
+        "finanças",
+        "financas",
+        "business",
+        "dinheiro"
       ]
     },
     {
@@ -74,7 +110,8 @@
       "description": "Browse the latest Society articles from Público",
       "mode": "view",
       "keywords": [
-        "sociedade"
+        "sociedade",
+        "social"
       ]
     },
     {
@@ -106,7 +143,9 @@
       "description": "Browse the latest Culture articles from Público",
       "mode": "view",
       "keywords": [
-        "cultura"
+        "cultura",
+        "arte",
+        "cultural"
       ]
     },
     {
@@ -195,7 +234,10 @@
       "mode": "view",
       "keywords": [
         "media",
-        "comunicação social"
+        "comunicação social",
+        "comunicacao social",
+        "imprensa",
+        "jornalismo"
       ]
     },
     {
@@ -218,7 +260,9 @@
       "mode": "view",
       "keywords": [
         "saúde",
-        "saude"
+        "saude",
+        "health",
+        "medicina"
       ]
     },
     {
@@ -228,7 +272,9 @@
       "description": "Browse the latest Environment articles from Público",
       "mode": "view",
       "keywords": [
-        "ambiente"
+        "ambiente",
+        "clima",
+        "climate"
       ]
     },
     {
@@ -315,6 +361,7 @@
         "ipsilon",
         "cultura",
         "música",
+        "musica",
         "cinema"
       ]
     },
@@ -338,7 +385,9 @@
       "description": "Browse the latest Travel articles from Público",
       "mode": "view",
       "keywords": [
-        "viagens"
+        "viagens",
+        "turismo",
+        "travel"
       ]
     },
     {
@@ -361,7 +410,8 @@
       "mode": "view",
       "keywords": [
         "casa",
-        "decoração"
+        "decoração",
+        "decoracao"
       ]
     },
     {
@@ -385,7 +435,8 @@
       "keywords": [
         "multimédia",
         "multimedia",
-        "vídeo"
+        "vídeo",
+        "video"
       ]
     },
     {
@@ -396,7 +447,9 @@
       "mode": "view",
       "keywords": [
         "vídeos",
-        "videos"
+        "videos",
+        "vídeo",
+        "video"
       ]
     },
     {
@@ -408,7 +461,8 @@
       "keywords": [
         "podcasts",
         "áudio",
-        "audio"
+        "audio",
+        "podcast"
       ]
     },
     {
@@ -420,7 +474,9 @@
       "keywords": [
         "fotogaleria",
         "fotografia",
-        "photos"
+        "photos",
+        "photo gallery",
+        "fotos"
       ]
     }
   ],
@@ -456,6 +512,7 @@
     "@raycast/eslint-config": "^2.0.4",
     "@types/node": "22.13.10",
     "@types/react": "19.0.10",
+    "@vitest/coverage-v8": "^4.1.10",
     "eslint": "^9.22.0",
     "eslint-plugin-react-hooks": "^5.1.0",
     "prettier": "^3.5.3",
@@ -471,6 +528,7 @@
     "lint": "ray lint",
     "publish": "npx @raycast/api@latest publish",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test:watch": "vitest"
   }
 }

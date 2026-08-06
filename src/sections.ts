@@ -18,7 +18,3 @@ export interface Section {
  * `npm run generate:sections`.
  */
 export const SECTIONS: Section[] = sectionsData;
-
-export function getSection(slug: string): Section | undefined {
-  return SECTIONS.find((section) => section.slug === slug);
-}

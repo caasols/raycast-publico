@@ -1,16 +1,25 @@
-import { List, Icon } from "@raycast/api";
+import { List, Icon, ActionPanel, Action } from "@raycast/api";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   searchArticlesByTag,
   fetchArticleDetail,
-  extractArticleId,
+  getArticleId,
 } from "./api/client";
 import { Article } from "./api/type";
 import { showFailureToast, useCachedPromise } from "@raycast/utils";
-import { getArticleUrl } from "./utils/article";
 import { ArticleListItem } from "./components/ArticleListItem";
 import { DETAIL_LOAD_DEBOUNCE_MS } from "./constants";
-import { getMaxArticles } from "./preferences";
+import { limitArticles } from "./preferences";
+import { getErrorMessage } from "./utils/errors";
+
+/**
+ * Público's own full-text search. The extension cannot query it directly:
+ * the route sits behind an AWS WAF JavaScript challenge that needs a browser
+ * engine. Handing the query to the browser is the closest we can get.
+ */
+function publicoSearchUrl(searchText: string): string {
+  return `https://www.publico.pt/pesquisa?query=${encodeURIComponent(searchText)}`;
+}
 
 export default function Command() {
   const [searchText, setSearchText] = useState("");
@@ -28,8 +37,6 @@ export default function Command() {
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Main search with automatic debouncing and caching
-  const maxArticles = getMaxArticles();
-
   const {
     data: rawArticles = [],
     isLoading,
@@ -53,7 +60,7 @@ export default function Command() {
     },
   );
 
-  const articles = rawArticles.slice(0, maxArticles);
+  const articles = limitArticles(rawArticles);
 
   const handleRefresh = useCallback(() => {
     void revalidate();
@@ -74,22 +81,24 @@ export default function Command() {
       return;
     }
 
-    const articleUrl = getArticleUrl(pendingArticle);
-    const articleId = extractArticleId(articleUrl);
+    const articleId = getArticleId(pendingArticle);
+
+    // Cancel any previous in-flight request and pending timer FIRST. Doing
+    // this after the early return below left a request running, and its
+    // spinner showing on the previously selected row, whenever the next
+    // selection was already cached.
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    setIsLoadingDetails(false);
 
     // Skip if already loaded
     if (!articleId || enrichedArticles[articleId]) {
       return;
-    }
-
-    // Clear any existing debounce timer
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current);
-    }
-
-    // Cancel any previous in-flight request
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
     }
 
     // Set new debounce timer
@@ -124,27 +133,40 @@ export default function Command() {
       }
     }, DETAIL_LOAD_DEBOUNCE_MS);
 
-    // Cleanup timer on unmount or when pendingArticle changes
+    // Cleanup on unmount or when pendingArticle changes. The request is
+    // aborted as well as the timer, so closing the command does not leave a
+    // fetch running to its 10 second timeout.
     return () => {
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
       }
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
     };
   }, [pendingArticle, enrichedArticles]);
 
-  const errorMessage = error
-    ? error instanceof Error
-      ? error.message
-      : String(error)
-    : null;
+  const errorMessage = getErrorMessage(error);
 
   const emptyView = useMemo(() => {
-    if (errorMessage) {
+    // useCachedPromise keeps the previous results on error. Showing the error
+    // view would hide results that are still valid, and the failure is already
+    // reported by the toast in onError.
+    if (errorMessage && articles.length === 0) {
       return (
         <List.EmptyView
           icon={Icon.ExclamationMark}
           title="Unable to load results"
           description={errorMessage}
+          actions={
+            <ActionPanel>
+              <Action.OpenInBrowser
+                title="Search on Público.pt"
+                url={publicoSearchUrl(searchText)}
+              />
+            </ActionPanel>
+          }
         />
       );
     }
@@ -153,8 +175,8 @@ export default function Command() {
       return (
         <List.EmptyView
           icon={Icon.MagnifyingGlass}
-          title="Search Público"
-          description='Search by topic, person, place, or team. For example "Benfica", "Trump", "inteligência artificial".'
+          title="Browse Público topics"
+          description='Type a subject, person, place, or team. For example "Benfica", "Trump", "inteligência artificial".'
         />
       );
     }
@@ -163,8 +185,16 @@ export default function Command() {
       return (
         <List.EmptyView
           icon={Icon.XmarkCircle}
-          title="No articles found"
-          description={`No Público topic matches "${searchText}". Try a single subject, name, or place.`}
+          title="No topic matches that"
+          description={`Público has no topic for "${searchText}". This command matches topics, so single subjects, names, places, and teams work best. Press Enter to search publico.pt for the full text instead.`}
+          actions={
+            <ActionPanel>
+              <Action.OpenInBrowser
+                title="Search on Público.pt"
+                url={publicoSearchUrl(searchText)}
+              />
+            </ActionPanel>
+          }
         />
       );
     }
@@ -176,7 +206,7 @@ export default function Command() {
     <List
       isLoading={isLoading}
       onSearchTextChange={setSearchText}
-      searchBarPlaceholder="Search Público…"
+      searchBarPlaceholder="Search Público topics…"
       isShowingDetail
       throttle
       onSelectionChange={(id) => {
@@ -193,8 +223,7 @@ export default function Command() {
       {emptyView
         ? emptyView
         : articles.map((article) => {
-            const articleUrl = getArticleUrl(article);
-            const articleId = extractArticleId(articleUrl);
+            const articleId = getArticleId(article);
             const enrichedData = articleId
               ? enrichedArticles[articleId]
               : undefined;

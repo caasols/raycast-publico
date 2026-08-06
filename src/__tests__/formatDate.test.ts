@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { formatDate } from "../utils/formatDate";
+import { formatDate, parseApiDate } from "../utils/formatDate";
 
 describe("formatDate", () => {
   it("formats a valid ISO date string", () => {
@@ -29,5 +29,35 @@ describe("formatDate", () => {
     // Portuguese month names: janeiro, fevereiro, março, abril, maio, junho...
     // June = "junho"
     expect(result.toLowerCase()).toMatch(/junh/);
+  });
+});
+
+describe("parseApiDate", () => {
+  it("trusts an explicit offset", () => {
+    // /api/list/ultimas sends this form.
+    expect(parseApiDate("2026-08-06T00:30:00+01:00")?.toISOString()).toBe(
+      "2026-08-05T23:30:00.000Z",
+    );
+  });
+
+  it("reads an offsetless summer timestamp as Lisbon, which is UTC+1", () => {
+    // /api/list/opiniao and /api/content/news/{id} send this form for the
+    // same instant. Without normalization it was read as machine-local, so
+    // the two feeds disagreed anywhere but UTC+1.
+    expect(parseApiDate("2026-08-06T00:30:00")?.toISOString()).toBe(
+      "2026-08-05T23:30:00.000Z",
+    );
+  });
+
+  it("reads an offsetless winter timestamp as Lisbon, which is UTC+0", () => {
+    // Lisbon observes DST, so a fixed offset would be wrong half the year.
+    expect(parseApiDate("2026-01-15T12:00:00")?.toISOString()).toBe(
+      "2026-01-15T12:00:00.000Z",
+    );
+  });
+
+  it("returns null for unparseable input", () => {
+    expect(parseApiDate("not-a-date")).toBeNull();
+    expect(parseApiDate("")).toBeNull();
   });
 });
