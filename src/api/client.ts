@@ -35,7 +35,7 @@ function validateArticle(data: unknown): Article | null {
 
 // --- Error classification ---
 
-function classifyError(error: unknown, context: string): Error {
+export function classifyError(error: unknown, context: string): Error {
   if (error instanceof Error) {
     if (error.name === "AbortError") {
       return error;
@@ -58,7 +58,7 @@ function classifyError(error: unknown, context: string): Error {
 
 // --- Shared fetch helpers ---
 
-async function fetchArticleList(
+export async function fetchArticleList(
   url: string,
   context: string,
 ): Promise<Article[]> {

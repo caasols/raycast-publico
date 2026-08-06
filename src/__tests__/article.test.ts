@@ -117,8 +117,8 @@ describe("resolvePublishedDate", () => {
   it("returns formatted date from data field", () => {
     const article = makeArticle({ data: "2024-03-15T10:30:00Z" });
     const result = resolvePublishedDate(article);
-    expect(result).not.toBe(DEFAULT_METADATA_PLACEHOLDER);
-    expect(result.length).toBeGreaterThan(0);
+    expect(result).toContain("2024");
+    expect(result).not.toMatch(/Invalid|NaN/);
   });
 
   it("falls back to time field if data is missing", () => {
