@@ -71,3 +71,24 @@ describe("keyword coverage", () => {
     expect(bare).toEqual([]);
   });
 });
+
+describe("keyword accents", () => {
+  it("pairs every accented keyword with an accent-free twin", () => {
+    // Portuguese readers routinely type without accents. A keyword of
+    // "saúde" with no "saude" is invisible to half of them, and nothing on
+    // screen reveals it.
+    const strip = (s: string) =>
+      s.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const gaps: string[] = [];
+    for (const command of manifest().commands) {
+      const keywords = command.keywords ?? [];
+      for (const keyword of keywords) {
+        const bare = strip(keyword);
+        if (bare !== keyword && !keywords.includes(bare)) {
+          gaps.push(`${command.name}: ${keyword} has no ${bare}`);
+        }
+      }
+    }
+    expect(gaps).toEqual([]);
+  });
+});

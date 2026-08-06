@@ -23,7 +23,8 @@
         "destaques",
         "mais lidas",
         "news",
-        "notícias"
+        "notícias",
+        "noticias"
       ]
     },
     {
@@ -39,7 +40,8 @@
         "ultimas",
         "recentes",
         "news",
-        "notícias"
+        "notícias",
+        "noticias"
       ]
     },
     {
@@ -54,9 +56,11 @@
         "news",
         "pesquisa",
         "notícias",
+        "noticias",
         "procurar",
         "topic",
-        "tópico"
+        "tópico",
+        "topico"
       ]
     },
     {
@@ -92,7 +96,11 @@
       "keywords": [
         "economia",
         "negócios",
-        "finanças"
+        "negocios",
+        "finanças",
+        "financas",
+        "business",
+        "dinheiro"
       ]
     },
     {
@@ -102,7 +110,8 @@
       "description": "Browse the latest Society articles from Público",
       "mode": "view",
       "keywords": [
-        "sociedade"
+        "sociedade",
+        "social"
       ]
     },
     {
@@ -134,7 +143,9 @@
       "description": "Browse the latest Culture articles from Público",
       "mode": "view",
       "keywords": [
-        "cultura"
+        "cultura",
+        "arte",
+        "cultural"
       ]
     },
     {
@@ -223,7 +234,10 @@
       "mode": "view",
       "keywords": [
         "media",
-        "comunicação social"
+        "comunicação social",
+        "comunicacao social",
+        "imprensa",
+        "jornalismo"
       ]
     },
     {
@@ -246,7 +260,9 @@
       "mode": "view",
       "keywords": [
         "saúde",
-        "saude"
+        "saude",
+        "health",
+        "medicina"
       ]
     },
     {
@@ -256,7 +272,9 @@
       "description": "Browse the latest Environment articles from Público",
       "mode": "view",
       "keywords": [
-        "ambiente"
+        "ambiente",
+        "clima",
+        "climate"
       ]
     },
     {
@@ -343,6 +361,7 @@
         "ipsilon",
         "cultura",
         "música",
+        "musica",
         "cinema"
       ]
     },
@@ -366,7 +385,9 @@
       "description": "Browse the latest Travel articles from Público",
       "mode": "view",
       "keywords": [
-        "viagens"
+        "viagens",
+        "turismo",
+        "travel"
       ]
     },
     {
@@ -389,7 +410,8 @@
       "mode": "view",
       "keywords": [
         "casa",
-        "decoração"
+        "decoração",
+        "decoracao"
       ]
     },
     {
@@ -413,7 +435,8 @@
       "keywords": [
         "multimédia",
         "multimedia",
-        "vídeo"
+        "vídeo",
+        "video"
       ]
     },
     {
@@ -424,7 +447,9 @@
       "mode": "view",
       "keywords": [
         "vídeos",
-        "videos"
+        "videos",
+        "vídeo",
+        "video"
       ]
     },
     {
@@ -436,7 +461,8 @@
       "keywords": [
         "podcasts",
         "áudio",
-        "audio"
+        "audio",
+        "podcast"
       ]
     },
     {
@@ -448,7 +474,9 @@
       "keywords": [
         "fotogaleria",
         "fotografia",
-        "photos"
+        "photos",
+        "photo gallery",
+        "fotos"
       ]
     }
   ],
