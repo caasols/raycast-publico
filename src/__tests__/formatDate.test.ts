@@ -26,9 +26,10 @@ describe("formatDate", () => {
 
   it("formats dates in Portuguese locale", () => {
     const result = formatDate("2024-06-15T14:00:00Z");
-    // Portuguese month names: janeiro, fevereiro, março, abril, maio, junho...
-    // June = "junho"
-    expect(result.toLowerCase()).toMatch(/junh/);
+    // pt-PT puts the day first. The month name used to be the locale signal,
+    // but the format is now numeric to fit Raycast's Published label, so
+    // ordering is what distinguishes pt-PT from en-US (which gives 6/15/2024).
+    expect(result).toMatch(/^15\/06\/2024, /);
   });
 });
 
@@ -59,5 +60,22 @@ describe("parseApiDate", () => {
   it("returns null for unparseable input", () => {
     expect(parseApiDate("not-a-date")).toBeNull();
     expect(parseApiDate("")).toBeNull();
+  });
+});
+
+describe("formatDate output shape", () => {
+  it("stays short enough for the Published label", () => {
+    // The long Portuguese form was 28 chars and Raycast elided its middle,
+    // rendering the year as "agosto...26". Keep this under 20.
+    const formatted = formatDate("2026-08-04T18:30:03+01:00");
+    expect(formatted.length).toBeLessThan(20);
+    expect(formatted).toMatch(/^\d{2}\/\d{2}\/\d{4}, \d{2}:\d{2}$/);
+  });
+
+  it("still renders in the reader's timezone", () => {
+    // Same instant, both API shapes, must format identically.
+    expect(formatDate("2026-08-04T18:30:03+01:00")).toBe(
+      formatDate("2026-08-04T18:30:03"),
+    );
   });
 });

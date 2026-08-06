@@ -66,16 +66,19 @@ export function formatDate(dateStr: string): string {
       return dateStr; // Return the original string if parsing fails
     }
 
-    // Format the date in Portuguese
+    // Short numeric form: "04/08/2026, 19:30". The long Portuguese form
+    // ("4 de agosto de 2026 às 19:30") is 28 characters and Raycast elides
+    // the middle of the Published label at that width, so the year came out
+    // as "agosto...26". This is 17 and fits.
     const options: Intl.DateTimeFormatOptions = {
-      day: "numeric",
-      month: "long",
+      day: "2-digit",
+      month: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     };
 
-    return date.toLocaleDateString("pt-PT", options);
+    return date.toLocaleString("pt-PT", options);
   } catch (error) {
     console.error("Error formatting date:", error);
     return dateStr; // Return the original string if an error occurs
