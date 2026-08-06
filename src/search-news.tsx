@@ -84,19 +84,22 @@ export default function Command() {
 
     const articleId = getArticleId(pendingArticle);
 
-    // Skip if already loaded
-    if (!articleId || enrichedArticles[articleId]) {
-      return;
-    }
-
-    // Clear any existing debounce timer
+    // Cancel any previous in-flight request and pending timer FIRST. Doing
+    // this after the early return below left a request running, and its
+    // spinner showing on the previously selected row, whenever the next
+    // selection was already cached.
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
     }
-
-    // Cancel any previous in-flight request
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    setIsLoadingDetails(false);
+
+    // Skip if already loaded
+    if (!articleId || enrichedArticles[articleId]) {
+      return;
     }
 
     // Set new debounce timer
@@ -131,10 +134,16 @@ export default function Command() {
       }
     }, DETAIL_LOAD_DEBOUNCE_MS);
 
-    // Cleanup timer on unmount or when pendingArticle changes
+    // Cleanup on unmount or when pendingArticle changes. The request is
+    // aborted as well as the timer, so closing the command does not leave a
+    // fetch running to its 10 second timeout.
     return () => {
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
+      }
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
       }
     };
   }, [pendingArticle, enrichedArticles]);
