@@ -9,7 +9,8 @@ import { Article } from "./api/type";
 import { showFailureToast, useCachedPromise } from "@raycast/utils";
 import { ArticleListItem } from "./components/ArticleListItem";
 import { DETAIL_LOAD_DEBOUNCE_MS } from "./constants";
-import { getMaxArticles } from "./preferences";
+import { limitArticles } from "./preferences";
+import { getErrorMessage } from "./utils/errors";
 
 /**
  * Público's own full-text search. The extension cannot query it directly:
@@ -36,8 +37,6 @@ export default function Command() {
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Main search with automatic debouncing and caching
-  const maxArticles = getMaxArticles();
-
   const {
     data: rawArticles = [],
     isLoading,
@@ -61,7 +60,7 @@ export default function Command() {
     },
   );
 
-  const articles = rawArticles.slice(0, maxArticles);
+  const articles = limitArticles(rawArticles);
 
   const handleRefresh = useCallback(() => {
     void revalidate();
@@ -148,11 +147,7 @@ export default function Command() {
     };
   }, [pendingArticle, enrichedArticles]);
 
-  const errorMessage = error
-    ? error instanceof Error
-      ? error.message
-      : String(error)
-    : null;
+  const errorMessage = getErrorMessage(error);
 
   const emptyView = useMemo(() => {
     // useCachedPromise keeps the previous results on error. Showing the error
