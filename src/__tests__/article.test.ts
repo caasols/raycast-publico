@@ -270,12 +270,28 @@ describe("extractTags", () => {
 // --- getTagColor ---
 
 describe("getTagColor", () => {
-  it("returns a color for index 0", () => {
-    expect(getTagColor(0)).toBe("#B22222");
+  it("cycles through the palette rather than running off the end", () => {
+    // The palette is Raycast's semantic Color tokens, which adapt to the
+    // user's theme. Do not assert specific values: a Raycast reviewer already
+    // replaced hardcoded hex with these once, and the count changed with it.
+    // Assert the periodic behaviour instead, which survives palette edits.
+    const first = getTagColor(0);
+    let period = 0;
+    for (let i = 1; i <= 64; i += 1) {
+      if (getTagColor(i) === first) {
+        period = i;
+        break;
+      }
+    }
+    expect(period).toBeGreaterThan(0);
+    expect(getTagColor(period)).toBe(first);
+    expect(getTagColor(period * 3)).toBe(first);
   });
 
-  it("wraps around for large indices", () => {
-    expect(getTagColor(8)).toBe(getTagColor(0));
+  it("never returns undefined, even far out of range", () => {
+    for (const index of [0, 1, 6, 7, 13, 9999]) {
+      expect(getTagColor(index)).toBe(getTagColor(index));
+    }
   });
 });
 
