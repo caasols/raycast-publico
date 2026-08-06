@@ -40,7 +40,7 @@ function ArticleListItemComponent({
   ).slice(0, MAX_TAGS);
 
   const summarySource = enrichedArticle?.descricao ?? article.descricao;
-  const summary = cleanDescription(summarySource);
+  const summary = stripHtml(cleanDescription(summarySource));
   const publishedDate = resolvePublishedDate(enrichedArticle ?? article);
 
   const icon = getArticleIcon(article);

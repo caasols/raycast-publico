@@ -170,6 +170,21 @@ describe("cleanDescription", () => {
   });
 });
 
+describe("summary rendering contract", () => {
+  it("relies on the caller to strip markup that cleanDescription leaves", () => {
+    // cleanDescription removes the "há N horas" prefix; removing tags is
+    // stripHtml's job. Live opiniao items carry <em>, <p> and
+    // <span style="font-family: Georgia..."> inside descricao, so
+    // ArticleListItem must call both or that markup renders as text.
+    expect(cleanDescription("Um <em>email</em> que me enviou")).toContain(
+      "<em>",
+    );
+    expect(stripHtml(cleanDescription("Um <em>email</em> que me enviou"))).toBe(
+      "Um email que me enviou",
+    );
+  });
+});
+
 // --- formatAuthors ---
 
 describe("formatAuthors", () => {
