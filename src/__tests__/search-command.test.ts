@@ -25,10 +25,10 @@ describe("the topic command", () => {
   });
 
   it("stays findable by the words people actually type", () => {
-    // Renaming away from "Search" would hide the command from anyone typing
-    // it. Nothing else in the suite would catch that.
+    // Renaming away from "Search News" would hide the command from anyone
+    // typing the old name. Both words must stay, in both languages.
     const keywords = searchCommand()?.keywords ?? [];
-    for (const expected of ["search", "pesquisa"]) {
+    for (const expected of ["search", "news", "pesquisa", "notícias"]) {
       expect(keywords).toContain(expected);
     }
   });
