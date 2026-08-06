@@ -67,6 +67,13 @@ describe("classifyError", () => {
     const plain = new Error("something else");
     expect(classifyError(plain, "Ctx").message).not.toContain("internet");
   });
+
+  it("keeps the original cause instead of discarding it", () => {
+    const network = new TypeError("fetch failed");
+    const classified = classifyError(network, "Ctx");
+    expect(classified.message).toContain("internet");
+    expect(classified.cause).toBe(network);
+  });
 });
 
 describe("fetchArticleList", () => {

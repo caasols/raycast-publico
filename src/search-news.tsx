@@ -146,7 +146,10 @@ export default function Command() {
     : null;
 
   const emptyView = useMemo(() => {
-    if (errorMessage) {
+    // useCachedPromise keeps the previous results on error. Showing the error
+    // view would hide results that are still valid, and the failure is already
+    // reported by the toast in onError.
+    if (errorMessage && articles.length === 0) {
       return (
         <List.EmptyView
           icon={Icon.ExclamationMark}

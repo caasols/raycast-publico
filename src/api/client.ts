@@ -45,10 +45,14 @@ export function classifyError(error: unknown, context: string): Error {
         `${context}: the request took too long. Please try again.`,
       );
     }
-    // Network errors (DNS failure, connection refused, etc.)
+    // Network errors (DNS failure, connection refused, etc.) surface as
+    // TypeError from fetch. Keep the original as `cause`: a programming
+    // TypeError would otherwise be reported to the user as a network problem
+    // with its real message discarded.
     if (error instanceof TypeError) {
       return new Error(
         `${context}: could not connect. Please check your internet connection.`,
+        { cause: error },
       );
     }
     return error;
