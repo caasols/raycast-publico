@@ -1,56 +1,35 @@
 import { describe, it, expect } from "vitest";
-import { extractArticleId } from "../api/client";
+import { getArticleId } from "../api/client";
+import { Article } from "../api/type";
 
-describe("extractArticleId", () => {
-  it("returns null for empty string", () => {
-    expect(extractArticleId("")).toBeNull();
+const article = (over: Partial<Article> = {}): Article =>
+  ({ id: 98097, titulo: "t", url: "/u", ...over }) as Article;
+
+describe("getArticleId", () => {
+  it("uses the id the API already provides", () => {
+    expect(getArticleId(article({ id: 98097 }))).toBe("98097");
   });
 
-  it("returns the string directly if it's a numeric ID", () => {
-    expect(extractArticleId("123456")).toBe("123456");
+  it("does not read the id out of the URL", () => {
+    // Video URLs end in -YYYYMMDD-HHMMSS. The previous implementation parsed
+    // the URL and returned the time component, 155509, which is itself a
+    // valid article id (a 2002 article), so the detail pane silently showed
+    // another article's author, date and summary.
+    const video = article({
+      id: 98097,
+      url: "https://www.publico.pt/2026/08/04/video/mamdani-nao-20260804-155509",
+    });
+    expect(getArticleId(video)).toBe("98097");
+    expect(getArticleId(video)).not.toBe("155509");
   });
 
-  it("extracts ID from /editorial/ URL", () => {
-    expect(
-      extractArticleId("https://www.publico.pt/editorial/opinion-piece-789012"),
-    ).toBe("789012");
+  it("handles ids shorter than six digits", () => {
+    // These matched no URL pattern before, so the item was never enriched.
+    expect(getArticleId(article({ id: 906 }))).toBe("906");
   });
 
-  it("extracts ID from /noticia/ URL", () => {
-    expect(
-      extractArticleId(
-        "https://www.publico.pt/2024/03/15/politica/noticia/some-title-2345678",
-      ),
-    ).toBe("2345678");
-  });
-
-  it("extracts ID from URL ending with number before query params", () => {
-    expect(
-      extractArticleId("https://www.publico.pt/some/path/9876543?ref=homepage"),
-    ).toBe("9876543");
-  });
-
-  it("extracts ID from URL ending with number before hash", () => {
-    expect(
-      extractArticleId("https://www.publico.pt/some/path/9876543#section"),
-    ).toBe("9876543");
-  });
-
-  it("extracts 6+ digit number after dash as fallback", () => {
-    expect(
-      extractArticleId("https://www.publico.pt/some-article-title-1234567"),
-    ).toBe("1234567");
-  });
-
-  it("returns null for URL with no extractable ID", () => {
-    expect(extractArticleId("https://www.publico.pt/about")).toBeNull();
-  });
-
-  it("extracts ID from /noticia/ URL with query params", () => {
-    expect(
-      extractArticleId(
-        "https://www.publico.pt/noticia/headline-text-5555555?utm_source=test",
-      ),
-    ).toBe("5555555");
+  it("returns null when the API gives no id", () => {
+    expect(getArticleId({ titulo: "t", url: "/u" } as Article)).toBeNull();
+    expect(getArticleId(article({ id: 0 }))).toBeNull();
   });
 });

@@ -3,11 +3,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   searchArticlesByTag,
   fetchArticleDetail,
-  extractArticleId,
+  getArticleId,
 } from "./api/client";
 import { Article } from "./api/type";
 import { showFailureToast, useCachedPromise } from "@raycast/utils";
-import { getArticleUrl } from "./utils/article";
 import { ArticleListItem } from "./components/ArticleListItem";
 import { DETAIL_LOAD_DEBOUNCE_MS } from "./constants";
 import { getMaxArticles } from "./preferences";
@@ -83,8 +82,7 @@ export default function Command() {
       return;
     }
 
-    const articleUrl = getArticleUrl(pendingArticle);
-    const articleId = extractArticleId(articleUrl);
+    const articleId = getArticleId(pendingArticle);
 
     // Skip if already loaded
     if (!articleId || enrichedArticles[articleId]) {
@@ -218,8 +216,7 @@ export default function Command() {
       {emptyView
         ? emptyView
         : articles.map((article) => {
-            const articleUrl = getArticleUrl(article);
-            const articleId = extractArticleId(articleUrl);
+            const articleId = getArticleId(article);
             const enrichedData = articleId
               ? enrichedArticles[articleId]
               : undefined;

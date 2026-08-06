@@ -173,51 +173,17 @@ export async function searchArticlesByTag(query: string): Promise<Article[]> {
   return [];
 }
 
-// Extract article ID from URL
-export function extractArticleId(url: string): string | null {
-  try {
-    if (!url) {
-      return null;
-    }
-
-    // Check if it's directly a numeric ID
-    if (/^\d+$/.test(url)) {
-      return url;
-    }
-
-    // Pattern for /editorial/ URLs: extract the number after the last dash
-    const patternEditorial = /editorial\/[^-]+-(\d+)(?:\?|$|#)/;
-    const matchEditorial = url.match(patternEditorial);
-    if (matchEditorial && matchEditorial[1]) {
-      return matchEditorial[1];
-    }
-
-    // Pattern for /noticia/ URLs: extract the number after the last dash
-    const patternNoticia = /noticia\/[^-]+-(\d+)(?:\?|$|#)/;
-    const matchNoticia = url.match(patternNoticia);
-    if (matchNoticia && matchNoticia[1]) {
-      return matchNoticia[1];
-    }
-
-    // General pattern: find any number at the end of the URL path (before query params)
-    const patternGeneral = /\/([0-9]+)(?:\?|$|#)/;
-    const matchGeneral = url.match(patternGeneral);
-    if (matchGeneral && matchGeneral[1]) {
-      return matchGeneral[1];
-    }
-
-    // Last fallback: extract any number with 6+ digits from the URL
-    const patternFallback = /-(\d{6,})(?:\?|$|#)/;
-    const matchFallback = url.match(patternFallback);
-    if (matchFallback && matchFallback[1]) {
-      return matchFallback[1];
-    }
-
-    return null;
-  } catch (error) {
-    console.error("Error extracting article ID:", error);
-    return null;
-  }
+/**
+ * The article id, taken from the payload rather than parsed out of the URL.
+ *
+ * A previous implementation matched the URL against four regex patterns. Video,
+ * multimedia and podcast URLs end in `-YYYYMMDD-HHMMSS`, so the 6+ digit
+ * fallback matched the time component and returned a valid but unrelated
+ * article id, and ids under six digits matched nothing at all. `id` is present
+ * on every item the API returns.
+ */
+export function getArticleId(article: Article): string | null {
+  return article?.id ? String(article.id) : null;
 }
 
 // Fetch article detail by ID

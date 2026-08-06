@@ -1,7 +1,7 @@
 import { ActionPanel, Action, List, Icon } from "@raycast/api";
 import { memo } from "react";
 import { Article } from "../api/type";
-import { extractArticleId } from "../api/client";
+import { getArticleId } from "../api/client";
 import {
   cleanDescription,
   extractTags,
@@ -31,7 +31,7 @@ function ArticleListItemComponent({
   const cleanTitle =
     (article.titulo ? stripHtml(article.titulo) : "") || UNTITLED_ARTICLE;
   const articleUrl = getArticleUrl(article);
-  const articleId = extractArticleId(articleUrl);
+  const articleId = getArticleId(article);
   const itemId = String(article.id);
 
   const authorText = formatAuthors(enrichedArticle?.autores ?? article.autores);
