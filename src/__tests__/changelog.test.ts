@@ -19,12 +19,18 @@ describe("changelog", () => {
     }
   });
 
-  it("asserts no release date the repository cannot support", () => {
-    // The v1.0.0 release predates this git history, so its date is not
-    // recoverable. An invented date is worse than none: 2025-10-16 was the
-    // first commit ("Prepare v1.1"), not the v1.0.0 release.
-    const dated = HEADINGS.filter((h) => /- \d{4}-\d{2}-\d{2}\s*$/.test(h));
-    expect(dated).toEqual([]);
+  it("dates releases only where the date is known and verifiable", () => {
+    // v1.0.0's date is not in this repository: its history begins at
+    // "Prepare v1.1" and there are no tags or releases. It came from the
+    // merge of raycast/extensions#25901 on 2026-03-12. Pinned here so it is
+    // not "cleaned up" as unverifiable again.
+    expect(CHANGELOG).toContain("## [Initial Version] - 2026-03-12");
+
+    // Any other dated heading must be ISO, never invented prose.
+    const dated = HEADINGS.filter((h) => /- \d/.test(h));
+    for (const heading of dated) {
+      expect(heading).toMatch(/- \d{4}-\d{2}-\d{2}$/);
+    }
   });
 
   it("uses no em-dash", () => {
