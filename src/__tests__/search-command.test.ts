@@ -58,3 +58,15 @@ describe("the search fallback", () => {
     expect(block).not.toContain("pesquisa?query=");
   });
 });
+
+describe("keyword coverage", () => {
+  it("gives every command at least one keyword", () => {
+    // Titles are English; keywords are how a Portuguese reader finds a
+    // command. A command shipping with none is invisible to half its
+    // audience, and nothing on screen reveals it.
+    const bare = manifest()
+      .commands.filter((c) => (c.keywords ?? []).length === 0)
+      .map((c) => c.name);
+    expect(bare).toEqual([]);
+  });
+});

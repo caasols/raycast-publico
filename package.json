@@ -15,14 +15,30 @@
       "title": "Browse Popular News",
       "subtitle": "Público",
       "description": "Browse the most popular articles from Público",
-      "mode": "view"
+      "mode": "view",
+      "keywords": [
+        "popular",
+        "destaque",
+        "destaques",
+        "mais lidas",
+        "news",
+        "notícias"
+      ]
     },
     {
       "name": "view-latest-news",
       "title": "Browse Latest News",
       "subtitle": "Público",
       "description": "Browse the latest articles from Público",
-      "mode": "view"
+      "mode": "view",
+      "keywords": [
+        "latest",
+        "últimas",
+        "ultimas",
+        "recentes",
+        "news",
+        "notícias"
+      ]
     },
     {
       "name": "search-news",
