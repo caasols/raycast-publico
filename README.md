@@ -97,7 +97,8 @@ npm install && npm run dev
 Other useful scripts:
 
 ```bash
-npm test                     # unit tests
+npm test                     # 111 unit tests
+npm run test:coverage        # the same, with a coverage report
 npm run test:watch           # the same, in watch mode
 npm run lint
 npm run build

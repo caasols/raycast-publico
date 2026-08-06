@@ -18,7 +18,15 @@
 
 Command ids are unchanged, so existing aliases and hotkeys keep working.
 
+### Fixed
+
+- Video, multimedia and podcast articles showed another article's author, date, keywords and summary. Those URLs end in a timestamp, and the id was being read out of the URL, so it matched the time instead. The id now comes from the article itself.
+- Publication times were wrong outside UTC+1, and could show the wrong day. Público sends some timestamps without a timezone offset; those are now read as Lisbon time.
+- Article summaries showed raw HTML tags on articles whose summary contains formatting.
+- A failed search no longer hides results that are still on screen.
+
 ### Removed
+
 
 - Dropped the `cheerio` HTML-scraping dependency and the dead search code paths.
 
