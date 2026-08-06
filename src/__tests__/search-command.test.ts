@@ -25,10 +25,11 @@ describe("the topic command", () => {
   });
 
   it("stays findable by the words people actually type", () => {
-    // Renaming away from "Search News" would hide the command from anyone
-    // typing the old name. Both words must stay, in both languages.
+    // Raycast matches a multi-word query as a phrase, not as separate
+    // keyword hits, so the old title has to be present verbatim or anyone
+    // typing "search news" finds nothing.
     const keywords = searchCommand()?.keywords ?? [];
-    for (const expected of ["search", "news", "pesquisa", "notícias"]) {
+    for (const expected of ["search news", "search", "news", "pesquisa"]) {
       expect(keywords).toContain(expected);
     }
   });

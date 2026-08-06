@@ -17,6 +17,7 @@
       "description": "Browse the most popular articles from Público",
       "mode": "view",
       "keywords": [
+        "popular news",
         "popular",
         "destaque",
         "destaques",
@@ -32,6 +33,7 @@
       "description": "Browse the latest articles from Público",
       "mode": "view",
       "keywords": [
+        "latest news",
         "latest",
         "últimas",
         "ultimas",
@@ -47,6 +49,7 @@
       "description": "Browse Público articles by topic, person, place, or team",
       "mode": "view",
       "keywords": [
+        "search news",
         "search",
         "news",
         "pesquisa",
