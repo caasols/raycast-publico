@@ -1,34 +1,33 @@
 # Público Changelog
 
-## [Sections and Topic Search] - {PR_MERGE_DATE}
+## [Sections, Topics, and a Lot of Fixes] - {PR_MERGE_DATE}
 
 ### Added
 
-- **34 section commands.** Go straight to any Público section (`Browse Politics`, `Browse World`, `Browse Economy`, `Browse Sports`, `Browse Culture`, `Browse Science`, and more), generated from a single registry (`src/sections.json`).
-- **Endpoint discovery tooling.** `npm run discover` maps Público's open JSON API; `npm run generate:sections` regenerates the section commands.
+- **34 section commands.** Go straight to any Público section: `Browse Politics`, `Browse World`, `Browse Economy`, `Browse Sports`, `Browse Culture`, `Browse Science`, and more. Bind one to an alias or hotkey and skip the extension menu entirely.
+- **A way out when a search finds nothing.** If no Público topic matches what you typed, `Browse Topic` offers to run the same query against Público's own full-text search in your browser.
 
 ### Changed
 
-- **Search rebuilt on the JSON API.** Público's `/pesquisa` HTML page is now WAF-blocked, so search was failing. Search now slugifies the query and queries Público's tag feeds (`/api/list/{slug}`), which is fast, reliable, and all-Público. Best for topics, people, places, and teams.
-- **Command titles are English and verb-led**, so the list reads as one system: `Browse Politics`, `Browse Latest News`, `Search News`. The Portuguese name is kept as a search keyword, so typing `desporto` still finds Sports.
-- Six Público mastheads keep their names: P3, Ípsilon, Fugas, Azul, Ecosfera, and Ímpar.
-- `Search News` is now `Browse Topic`, which is what it actually does: it matches Público's own topics rather than searching article text. The command id is unchanged, so existing aliases and hotkeys keep working, and `search` and `pesquisa` are keywords so it stays findable.
-- When no topic matches, the command offers to run the same query against Público's full-text search in your browser.
-- Copy across the extension now uses one word per concept and a single ellipsis style.
+- **Every command title is now English and verb-led**, so the list reads as one system: `Browse Latest News`, `Browse Politics`, `Browse Topic`. Six Público mastheads keep their Portuguese names, because they are titles rather than generic sections: P3, Ípsilon, Fugas, Azul, Ecosfera, and Ímpar.
+- **`Search News` is now `Browse Topic`**, which is what it actually does. It matches Público's own topics rather than searching article text, so names, places, teams and subjects work well while descriptive phrases may find nothing.
+- **Enter now opens the article in your browser.** It previously opened a reader inside Raycast; see Removed below.
+- **Published dates are shorter**, `04/08/2026, 19:30`, so they are no longer cut off in the detail pane. Times are shown in your own timezone.
+- Searching still works in Portuguese. Every command keeps its Portuguese name as a keyword, with and without accents, so `desporto`, `saude` and `ultimas` all find the right command.
 
-Command ids are unchanged, so existing aliases and hotkeys keep working.
+**Your aliases and hotkeys keep working.** No command changed its identity, only its displayed name.
 
 ### Fixed
 
-- Video, multimedia and podcast articles showed another article's author, date, keywords and summary. Those URLs end in a timestamp, and the id was being read out of the URL, so it matched the time instead. The id now comes from the article itself.
-- Publication times were wrong outside UTC+1, and could show the wrong day. Público sends some timestamps without a timezone offset; those are now read as Lisbon time.
-- Article summaries showed raw HTML tags on articles whose summary contains formatting.
-- A failed search no longer hides results that are still on screen.
+- **Videos, multimedia and podcasts showed a completely different article's author, date and keywords.** Those URLs end in a timestamp, and the article id was being read out of the URL, so it picked up the time instead and loaded whatever article happened to have that id.
+- **Publication times were wrong outside UTC+1**, and could show the wrong day. Público sends some timestamps without a timezone, and those are now correctly read as Lisbon time before being converted to yours.
+- **Some summaries showed raw HTML** such as `<em>` and `<span>` as visible text.
+- A search that fails no longer wipes the results already on screen.
 
 ### Removed
 
-
-- Dropped the `cheerio` HTML-scraping dependency and the dead search code paths.
+- **`Read Article`.** Público's API does not return article text, so the reader could only ever tell you to open your browser. Enter now does that directly.
+- **`Summarize` and `View Summary`.** Both were placeholders that did nothing, and one was unreachable. They will return if the article text ever becomes available.
 
 ## [Initial Version]
 
