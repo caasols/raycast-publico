@@ -5,7 +5,7 @@ import { NewsListView } from "./components/NewsListView";
 export default function Command() {
   return (
     <NewsListView
-      fetchFn={() => fetchSection("opiniao")}
+      fetchFn={(size) => fetchSection("opiniao", size)}
       searchBarPlaceholder="Search Opinion…"
       errorToastTitle="Unable to load Opinion"
       emptyTitle="No Opinion articles right now"

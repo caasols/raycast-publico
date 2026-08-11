@@ -5,7 +5,7 @@ import { NewsListView } from "./components/NewsListView";
 export default function Command() {
   return (
     <NewsListView
-      fetchFn={() => fetchSection("ciencia")}
+      fetchFn={(size) => fetchSection("ciencia", size)}
       searchBarPlaceholder="Search Science…"
       errorToastTitle="Unable to load Science"
       emptyTitle="No Science articles right now"

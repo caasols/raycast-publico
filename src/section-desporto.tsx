@@ -5,7 +5,7 @@ import { NewsListView } from "./components/NewsListView";
 export default function Command() {
   return (
     <NewsListView
-      fetchFn={() => fetchSection("desporto")}
+      fetchFn={(size) => fetchSection("desporto", size)}
       searchBarPlaceholder="Search Sports…"
       errorToastTitle="Unable to load Sports"
       emptyTitle="No Sports articles right now"

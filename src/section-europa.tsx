@@ -5,7 +5,7 @@ import { NewsListView } from "./components/NewsListView";
 export default function Command() {
   return (
     <NewsListView
-      fetchFn={() => fetchSection("europa")}
+      fetchFn={(size) => fetchSection("europa", size)}
       searchBarPlaceholder="Search Europe…"
       errorToastTitle="Unable to load Europe"
       emptyTitle="No Europe articles right now"

@@ -5,7 +5,7 @@ import { NewsListView } from "./components/NewsListView";
 export default function Command() {
   return (
     <NewsListView
-      fetchFn={() => fetchSection("impar")}
+      fetchFn={(size) => fetchSection("impar", size)}
       searchBarPlaceholder="Search Ímpar…"
       errorToastTitle="Unable to load Ímpar"
       emptyTitle="No Ímpar articles right now"

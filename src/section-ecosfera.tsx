@@ -5,7 +5,7 @@ import { NewsListView } from "./components/NewsListView";
 export default function Command() {
   return (
     <NewsListView
-      fetchFn={() => fetchSection("ecosfera")}
+      fetchFn={(size) => fetchSection("ecosfera", size)}
       searchBarPlaceholder="Search Ecosfera…"
       errorToastTitle="Unable to load Ecosfera"
       emptyTitle="No Ecosfera articles right now"

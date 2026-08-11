@@ -5,7 +5,7 @@ import { NewsListView } from "./components/NewsListView";
 export default function Command() {
   return (
     <NewsListView
-      fetchFn={() => fetchSection("multimedia")}
+      fetchFn={(size) => fetchSection("multimedia", size)}
       searchBarPlaceholder="Search Multimedia…"
       errorToastTitle="Unable to load Multimedia"
       emptyTitle="No Multimedia articles right now"

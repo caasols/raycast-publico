@@ -5,7 +5,7 @@ import { NewsListView } from "./components/NewsListView";
 export default function Command() {
   return (
     <NewsListView
-      fetchFn={() => fetchSection("fugas")}
+      fetchFn={(size) => fetchSection("fugas", size)}
       searchBarPlaceholder="Search Fugas…"
       errorToastTitle="Unable to load Fugas"
       emptyTitle="No Fugas articles right now"

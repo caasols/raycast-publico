@@ -9,7 +9,7 @@ import { Article } from "./api/type";
 import { showFailureToast, useCachedPromise } from "@raycast/utils";
 import { ArticleListItem } from "./components/ArticleListItem";
 import { DETAIL_LOAD_DEBOUNCE_MS } from "./constants";
-import { limitArticles } from "./preferences";
+import { getMaxArticles, limitArticles } from "./preferences";
 import { getErrorMessage } from "./utils/errors";
 
 /**
@@ -37,19 +37,21 @@ export default function Command() {
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Main search with automatic debouncing and caching
+  const maxArticles = getMaxArticles();
+
   const {
     data: rawArticles = [],
     isLoading,
     error,
     revalidate,
   } = useCachedPromise(
-    async (query: string) => {
+    async (query: string, size: number) => {
       if (!query.trim()) {
         return [];
       }
-      return await searchArticlesByTag(query);
+      return await searchArticlesByTag(query, size);
     },
-    [searchText],
+    [searchText, maxArticles],
     {
       keepPreviousData: true,
       initialData: [],

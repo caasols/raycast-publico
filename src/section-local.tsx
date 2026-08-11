@@ -5,7 +5,7 @@ import { NewsListView } from "./components/NewsListView";
 export default function Command() {
   return (
     <NewsListView
-      fetchFn={() => fetchSection("local")}
+      fetchFn={(size) => fetchSection("local", size)}
       searchBarPlaceholder="Search Local…"
       errorToastTitle="Unable to load Local"
       emptyTitle="No Local articles right now"

@@ -5,7 +5,7 @@ import { NewsListView } from "./components/NewsListView";
 export default function Command() {
   return (
     <NewsListView
-      fetchFn={() => fetchSection("ipsilon")}
+      fetchFn={(size) => fetchSection("ipsilon", size)}
       searchBarPlaceholder="Search Ípsilon…"
       errorToastTitle="Unable to load Ípsilon"
       emptyTitle="No Ípsilon articles right now"

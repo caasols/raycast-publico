@@ -5,7 +5,7 @@ import { NewsListView } from "./components/NewsListView";
 export default function Command() {
   return (
     <NewsListView
-      fetchFn={() => fetchSection("casa")}
+      fetchFn={(size) => fetchSection("casa", size)}
       searchBarPlaceholder="Search Home…"
       errorToastTitle="Unable to load Home"
       emptyTitle="No Home articles right now"

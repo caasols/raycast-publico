@@ -5,7 +5,7 @@ import { NewsListView } from "./components/NewsListView";
 export default function Command() {
   return (
     <NewsListView
-      fetchFn={() => fetchSection("fotogaleria")}
+      fetchFn={(size) => fetchSection("fotogaleria", size)}
       searchBarPlaceholder="Search Photo Gallery…"
       errorToastTitle="Unable to load Photo Gallery"
       emptyTitle="No Photo Gallery articles right now"

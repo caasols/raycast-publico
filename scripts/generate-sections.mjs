@@ -28,7 +28,7 @@ import { NewsListView } from "./components/NewsListView";
 export default function Command() {
   return (
     <NewsListView
-      fetchFn={() => fetchSection(${JSON.stringify(s.slug)})}
+      fetchFn={(size) => fetchSection(${JSON.stringify(s.slug)}, size)}
       searchBarPlaceholder="Search ${s.title}…"
       errorToastTitle="Unable to load ${s.title}"
       emptyTitle="No ${s.title} articles right now"

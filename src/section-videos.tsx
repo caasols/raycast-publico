@@ -5,7 +5,7 @@ import { NewsListView } from "./components/NewsListView";
 export default function Command() {
   return (
     <NewsListView
-      fetchFn={() => fetchSection("videos")}
+      fetchFn={(size) => fetchSection("videos", size)}
       searchBarPlaceholder="Search Videos…"
       errorToastTitle="Unable to load Videos"
       emptyTitle="No Videos articles right now"

@@ -5,7 +5,7 @@ import { NewsListView } from "./components/NewsListView";
 export default function Command() {
   return (
     <NewsListView
-      fetchFn={() => fetchSection("ambiente")}
+      fetchFn={(size) => fetchSection("ambiente", size)}
       searchBarPlaceholder="Search Environment…"
       errorToastTitle="Unable to load Environment"
       emptyTitle="No Environment articles right now"

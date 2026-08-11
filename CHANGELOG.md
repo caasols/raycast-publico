@@ -19,6 +19,7 @@
 
 ### Fixed
 
+- **`Max Articles` never did anything.** All three settings showed the same 10 articles, because the request never asked Público for more. It now does, so 25 and 50 return 25 and 50. `Browse Latest News` still shows 10, which is all that feed returns. New installs start at 10; if you had chosen a larger value, it now takes effect.
 - **Videos, multimedia and podcasts showed a completely different article's author, date and keywords.** Those URLs end in a timestamp, and the article id was being read out of the URL, so it picked up the time instead and loaded whatever article happened to have that id.
 - **Publication times were wrong outside UTC+1**, and could show the wrong day. Público sends some timestamps without a timezone, and those are now correctly read as Lisbon time before being converted to yours.
 - **Some summaries showed raw HTML** such as `<em>` and `<span>` as visible text.
