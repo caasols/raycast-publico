@@ -488,10 +488,10 @@
     {
       "name": "maxArticles",
       "title": "Max Articles",
-      "description": "Maximum number of articles to display in the list",
+      "description": "Maximum articles to display. Browse Latest News always shows 10, which is all the API returns for that feed.",
       "type": "dropdown",
       "required": false,
-      "default": "25",
+      "default": "10",
       "data": [
         {
           "title": "10",

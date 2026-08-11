@@ -1,5 +1,6 @@
 import { getPreferenceValues } from "@raycast/api";
 import { Article } from "./api/type";
+import { DEFAULT_MAX_ARTICLES } from "./constants";
 
 /**
  * The Max Articles preference as a number.
@@ -12,7 +13,7 @@ import { Article } from "./api/type";
  */
 export function getMaxArticles(): number {
   const { maxArticles } = getPreferenceValues<Preferences>();
-  return Number.parseInt(maxArticles, 10) || 25;
+  return Number.parseInt(maxArticles, 10) || DEFAULT_MAX_ARTICLES;
 }
 
 /** Trim a feed to the user's Max Articles preference. */
