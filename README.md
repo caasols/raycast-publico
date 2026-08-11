@@ -60,7 +60,7 @@ Nothing is required to start using the extension. There is a single optional pre
 
 | Preference     | Value                                                                  |
 | -------------- | ---------------------------------------------------------------------- |
-| `Max Articles` | How many articles a list shows at most: `10`, `25` (default), or `50`. |
+| `Max Articles` | How many articles a list requests: `10` (default), `25`, or `50`. Browse Latest News always shows 10. |
 
 ## How search works
 
@@ -74,7 +74,7 @@ The extension cannot perform that full-text search itself. Público's search pag
 
 The extension is read-only and anonymous. It sends no credentials, has no telemetry, and contacts no host other than `publico.pt`.
 
-- Público's list endpoints return about 10 articles each and ignore paging parameters, so `Max Articles` is an upper bound rather than a target. Setting it to 50 will not produce more than the API serves.
+- Público's list endpoints accept a `size` parameter and return up to 50 articles on request, except `Browse Latest News`, which ignores it and always returns 10. There is still no working paging, so 50 is the ceiling either way.
 - `Browse Topic` matches Público topics, not arbitrary text. See the section above.
 - Full article text is not available. Público's API returns only a summary of about 150 characters, and the public article page is protected against non-browser requests, so the extension shows the summary and opens the browser for the rest.
 

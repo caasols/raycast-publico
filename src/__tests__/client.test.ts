@@ -220,7 +220,7 @@ describe("size parameter", () => {
   it("clamps 51 and above down to 50", () => {
     expect(clampSize(51)).toBe(50);
     expect(clampSize(1000)).toBe(50);
-    expect(clampSize(MAX_PAGE_SIZE)).toBe(50);
+    expect(clampSize(MAX_PAGE_SIZE + 1)).toBe(MAX_PAGE_SIZE);
   });
 
   it("truncates fractional sizes", () => {

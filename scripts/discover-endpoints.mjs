@@ -203,7 +203,7 @@ async function main() {
     notes: [
       "HTML routes (homepage, /pesquisa) are WAF-challenged (HTTP 202, empty body).",
       "JSON /api/list/{slug} routes are open and return ~10 full article objects.",
-      "List endpoints ignore count/page/limit params — always ~10 items.",
+      "List endpoints accept a size param up to 50; above 50 the response collapses back to 10. /api/list/ultimas ignores size and always returns 10.",
       "/api/list/pesquisa ignores its query param (returns the science feed).",
       "Section label comes from each article's `rubrica` field; `secao` is null.",
       "SEARCH: /api/list/{slug} also accepts TAG slugs, not just sections. " +
