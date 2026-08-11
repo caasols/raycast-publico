@@ -1,4 +1,5 @@
 import { Article } from "./type";
+import { DEFAULT_MAX_ARTICLES } from "../constants";
 
 const BASE_URL = "https://www.publico.pt/api";
 const REQUEST_TIMEOUT_MS = 10_000;
@@ -11,6 +12,20 @@ const REQUEST_HEADERS = {
     "(KHTML, like Gecko) Chrome/124.0 Safari/537.36",
   Accept: "application/json",
 };
+
+// The list routes accept `?size=N`, which is undocumented and was found by
+// probing. It fails DOWNWARD past its maximum: size=51 returns 10, not 50.
+// So an out-of-range value is worse than sending nothing, and clamping is
+// load-bearing rather than defensive. Verified live 2026-08-12.
+const MIN_PAGE_SIZE = 1;
+export const MAX_PAGE_SIZE = 50;
+
+export function clampSize(size: number): number {
+  if (!Number.isFinite(size)) {
+    return DEFAULT_MAX_ARTICLES;
+  }
+  return Math.min(MAX_PAGE_SIZE, Math.max(MIN_PAGE_SIZE, Math.trunc(size)));
+}
 
 // --- Response validation ---
 
@@ -65,9 +80,13 @@ export function classifyError(error: unknown, context: string): Error {
 export async function fetchArticleList(
   url: string,
   context: string,
+  size?: number,
 ): Promise<Article[]> {
+  const requestUrl =
+    size === undefined ? url : `${url}?size=${clampSize(size)}`;
+
   try {
-    const response = await fetch(url, {
+    const response = await fetch(requestUrl, {
       signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
       headers: REQUEST_HEADERS,
     });
@@ -87,6 +106,12 @@ export async function fetchArticleList(
 
 // --- Public API ---
 
+/**
+ * The latest feed takes NO size. `ultimas` ignores every paging parameter
+ * tried: size, n, limit, pageSize, maxResults, perPage, take, size combined
+ * with page, and a path segment. All returned 10. Verified live 2026-08-12.
+ * Sending one would imply an effect it does not have.
+ */
 export async function fetchLatestHeadlines(): Promise<Article[]> {
   return fetchArticleList(
     `${BASE_URL}/list/ultimas`,
@@ -94,21 +119,26 @@ export async function fetchLatestHeadlines(): Promise<Article[]> {
   );
 }
 
-export async function fetchTopNews(): Promise<Article[]> {
+export async function fetchTopNews(size?: number): Promise<Article[]> {
   return fetchArticleList(
     `${BASE_URL}/list/destaque`,
     "Unable to load popular news",
+    size,
   );
 }
 
 /**
  * Fetch a section feed by slug (e.g. "politica", "desporto").
- * Returns up to ~10 of the latest articles. The API caps every list here.
+ * `size` is clamped to 1..50; without it the API returns 10.
  */
-export async function fetchSection(slug: string): Promise<Article[]> {
+export async function fetchSection(
+  slug: string,
+  size?: number,
+): Promise<Article[]> {
   return fetchArticleList(
     `${BASE_URL}/list/${encodeURIComponent(slug)}`,
     `Unable to load ${slug}`,
+    size,
   );
 }
 
@@ -161,14 +191,21 @@ export function slugCandidates(query: string): string[] {
   return [...new Set(candidates)].filter(Boolean);
 }
 
-export async function searchArticlesByTag(query: string): Promise<Article[]> {
+export async function searchArticlesByTag(
+  query: string,
+  size?: number,
+): Promise<Article[]> {
   if (!query.trim()) {
     return [];
   }
 
   const context = "Unable to search articles";
   for (const slug of slugCandidates(query)) {
-    const results = await fetchArticleList(`${BASE_URL}/list/${slug}`, context);
+    const results = await fetchArticleList(
+      `${BASE_URL}/list/${slug}`,
+      context,
+      size,
+    );
     if (results.length > 0) {
       return results;
     }

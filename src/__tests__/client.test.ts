@@ -5,7 +5,13 @@ import {
   fetchArticleDetail,
   searchArticlesByTag,
   classifyError,
+  fetchSection,
+  fetchTopNews,
+  fetchLatestHeadlines,
+  clampSize,
+  MAX_PAGE_SIZE,
 } from "../api/client";
+import { DEFAULT_MAX_ARTICLES } from "../constants";
 import { Article } from "../api/type";
 
 const article = (over: Partial<Article> = {}): Article =>
@@ -150,5 +156,79 @@ describe("searchArticlesByTag", () => {
     await expect(searchArticlesByTag("preço da habitação")).resolves.toEqual(
       [],
     );
+  });
+});
+
+describe("size parameter", () => {
+  function mockFetchOnce(payload: unknown) {
+    const spy = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      statusText: "OK",
+      json: async () => payload,
+    }));
+    vi.stubGlobal("fetch", spy);
+    return spy;
+  }
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("sends size on a section feed", async () => {
+    const spy = mockFetchOnce([]);
+    await fetchSection("politica", 25);
+    expect(spy.mock.calls[0][0]).toContain("size=25");
+    expect(spy.mock.calls[0][0]).toContain("/list/politica");
+  });
+
+  it("sends size on the popular feed", async () => {
+    const spy = mockFetchOnce([]);
+    await fetchTopNews(50);
+    expect(spy.mock.calls[0][0]).toContain("size=50");
+  });
+
+  it("sends size on a topic search", async () => {
+    const spy = mockFetchOnce([]);
+    await searchArticlesByTag("benfica", 50);
+    expect(spy.mock.calls[0][0]).toContain("size=50");
+  });
+
+  it("sends NO size on the latest feed, which ignores it", async () => {
+    const spy = mockFetchOnce([]);
+    await fetchLatestHeadlines();
+    expect(spy.mock.calls[0][0]).not.toContain("size=");
+  });
+
+  it("omits the parameter entirely when no size is given", async () => {
+    const spy = mockFetchOnce([]);
+    await fetchSection("politica");
+    expect(spy.mock.calls[0][0]).not.toContain("size=");
+  });
+
+  it("clamps above the API maximum, which fails downward past 50", async () => {
+    const spy = mockFetchOnce([]);
+    await fetchSection("politica", 51);
+    expect(spy.mock.calls[0][0]).toContain("size=50");
+  });
+
+  it("clamps zero and negatives up to 1", () => {
+    expect(clampSize(0)).toBe(1);
+    expect(clampSize(-5)).toBe(1);
+  });
+
+  it("clamps 51 and above down to 50", () => {
+    expect(clampSize(51)).toBe(50);
+    expect(clampSize(1000)).toBe(50);
+    expect(clampSize(MAX_PAGE_SIZE)).toBe(50);
+  });
+
+  it("truncates fractional sizes", () => {
+    expect(clampSize(25.7)).toBe(25);
+  });
+
+  it("falls back to the default when given a non-finite size", () => {
+    expect(clampSize(Number.NaN)).toBe(DEFAULT_MAX_ARTICLES);
+    expect(clampSize(Number.POSITIVE_INFINITY)).toBe(DEFAULT_MAX_ARTICLES);
   });
 });
