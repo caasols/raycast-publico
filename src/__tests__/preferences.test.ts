@@ -2,6 +2,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { DEFAULT_MAX_ARTICLES } from "../constants";
+// vi.mock below is hoisted above this import, so preferences.ts already
+// sees the mocked @raycast/api. A dynamic `await import` is not needed
+// (and top-level await is rejected by tsconfig's module: "commonjs").
+import { getMaxArticles, limitArticles } from "../preferences";
 
 // vi.mock is hoisted above every const in this file, so the factory cannot
 // close over an ordinary variable: doing so throws a TDZ error at import
@@ -13,9 +17,6 @@ const { getPreferenceValues } = vi.hoisted(() => ({
 }));
 
 vi.mock("@raycast/api", () => ({ getPreferenceValues }));
-
-// Imported after the mock so preferences.ts picks it up.
-const { getMaxArticles, limitArticles } = await import("../preferences");
 
 const ROOT = process.cwd();
 
