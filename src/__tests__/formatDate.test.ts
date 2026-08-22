@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { formatDate, parseApiDate } from "../utils/formatDate";
 
 describe("formatDate", () => {
@@ -60,6 +60,40 @@ describe("parseApiDate", () => {
   it("returns null for unparseable input", () => {
     expect(parseApiDate("not-a-date")).toBeNull();
     expect(parseApiDate("")).toBeNull();
+  });
+
+  it("recognizes an offset written without a colon", () => {
+    // The offset regex makes the colon optional; requiring it would send
+    // "+0100" down the append-Z path and produce null.
+    expect(parseApiDate("2026-08-06T00:30:00+0100")?.toISOString()).toBe(
+      "2026-08-05T23:30:00.000Z",
+    );
+  });
+
+  it("trims surrounding whitespace before parsing", () => {
+    expect(parseApiDate("  2026-08-06T00:30:00Z  ")?.toISOString()).toBe(
+      "2026-08-06T00:30:00.000Z",
+    );
+  });
+
+  it("returns null for a missing value instead of throwing", () => {
+    expect(parseApiDate(undefined as unknown as string)).toBeNull();
+    expect(parseApiDate(null as unknown as string)).toBeNull();
+  });
+});
+
+describe("formatDate error handling", () => {
+  it("logs and returns the input when given a non-string", () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      expect(formatDate(123 as unknown as string)).toBe(123);
+      expect(spy).toHaveBeenCalledWith(
+        "Error formatting date:",
+        expect.any(TypeError),
+      );
+    } finally {
+      spy.mockRestore();
+    }
   });
 });
 
