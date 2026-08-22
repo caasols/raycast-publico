@@ -43,3 +43,7 @@ __pycache__/
 
 # coverage reports
 coverage/
+
+# stryker mutation testing
+reports/
+.stryker-tmp/

@@ -512,8 +512,13 @@
     "@raycast/api": "^2.0.5",
     "@raycast/utils": "^1.17.0"
   },
+  "overrides": {
+    "qs": "^6.15.3"
+  },
   "devDependencies": {
     "@raycast/eslint-config": "^2.0.4",
+    "@stryker-mutator/core": "^10.0.0",
+    "@stryker-mutator/vitest-runner": "^10.0.0",
     "@types/node": "22.13.10",
     "@types/react": "19.0.10",
     "@vitest/coverage-v8": "^4.1.10",
@@ -533,6 +538,7 @@
     "publish": "npx @raycast/api@latest publish",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "test:mutation": "stryker run",
     "test:watch": "vitest"
   }
 }
