@@ -161,12 +161,16 @@ describe("searchArticlesByTag", () => {
 
 describe("size parameter", () => {
   function mockFetchOnce(payload: unknown) {
-    const spy = vi.fn(async () => ({
-      ok: true,
-      status: 200,
-      statusText: "OK",
-      json: async () => payload,
-    }));
+    // The generic types mock.calls as [string, ...], so the assertions
+    // below can index calls[0][0] under strict tsc.
+    const spy = vi.fn<(url: string, init?: RequestInit) => Promise<unknown>>(
+      async () => ({
+        ok: true,
+        status: 200,
+        statusText: "OK",
+        json: async () => payload,
+      }),
+    );
     vi.stubGlobal("fetch", spy);
     return spy;
   }
